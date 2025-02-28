@@ -1,20 +1,27 @@
 package nl.han.oose.dea.resources;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import nl.han.oose.dea.DTO.LoginRequestDTO;
-import nl.han.oose.dea.DTO.LoginResponseDto;
+import nl.han.oose.dea.DTO.LoginResponseDTO;
 import nl.han.oose.dea.service.LoginService;
 
 
-@Path("/login")
+@Path("login")
 public class Login {
 
-    private final LoginService loginService = new LoginService(); // Call LoginService
+    private  LoginService loginService = new LoginService();
+
+    public Login(){
+
+    }
+
+    @Inject
+    public Login(LoginService loginService){
+        this.loginService = loginService;
+    }
 
 
     @POST
@@ -22,14 +29,19 @@ public class Login {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginRequestDTO loginrequest) {
 
-        LoginResponseDto responseDto = loginService.checkCredentialsLogin(loginrequest.getUser(),loginrequest.getPassword());
+        LoginResponseDTO responseDTO = loginService.checkCredentialsLogin(loginrequest.getUser(),loginrequest.getPassword());
 
-        if(responseDto != null){
-            return Response.ok(responseDto).build();
+        if(responseDTO != null){
+            return Response.ok(responseDTO).build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"message\": \"Invalid credentials\"}")
                     .build();
         }
     }
+
+    @GET
+    public String tester(){
+        return "test";
+}
+
 }

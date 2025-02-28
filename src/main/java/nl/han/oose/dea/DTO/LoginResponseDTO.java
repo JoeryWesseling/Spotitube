@@ -1,6 +1,6 @@
 package nl.han.oose.dea.DTO;
 
-public class LoginResponseDto {
+public class LoginResponseDTO {
 
     private String token;
 

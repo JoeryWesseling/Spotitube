@@ -1,6 +1,8 @@
 package nl.han.oose.dea.service;
 
-import nl.han.oose.dea.DTO.LoginResponseDto;
+import nl.han.oose.dea.DTO.LoginResponseDTO;
+
+import java.util.UUID;
 
 public class LoginService {
 
@@ -8,15 +10,15 @@ public class LoginService {
     static final String VALID_PASSWORD = "SamwiseGamgee";
 
 
-    public LoginResponseDto checkCredentialsLogin(String username, String password) {
+    public LoginResponseDTO checkCredentialsLogin(String username, String password) {
         if(VALID_USER.equals(username) && VALID_PASSWORD.equals(password)){
-            String token = "My Precious";
+            String token = UUID.randomUUID().toString();
 
-            LoginResponseDto responseDto = new LoginResponseDto();
-            responseDto.setToken(token);
-            responseDto.setUser("Frodo Baggins");
+            LoginResponseDTO responseDTO = new LoginResponseDTO();
+            responseDTO.setToken(token);
+            responseDTO.setUser("Frodo Baggins");
 
-            return responseDto;
+            return responseDTO;
 
         }
         return null;
