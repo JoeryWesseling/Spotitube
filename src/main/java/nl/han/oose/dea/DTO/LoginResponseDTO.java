@@ -6,6 +6,15 @@ public class LoginResponseDTO {
 
     private String user;
 
+    public LoginResponseDTO(String token, String user){
+        this.token = token;
+        this.user = user;
+    }
+
+    public LoginResponseDTO(){
+
+    }
+
     public String getToken(){
         return token;
     }
