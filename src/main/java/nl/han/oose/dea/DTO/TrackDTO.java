@@ -7,6 +7,10 @@ public class TrackDTO {
     private String performer;
     private int duration;
     private String album;
+    private int playCount;
+    private String publicationDate;
+    private String description;
+
 
 
     public TrackDTO(){

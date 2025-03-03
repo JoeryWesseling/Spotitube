@@ -9,6 +9,6 @@ public class Test {
 
     @GET
     public String helloWorld(){
-        return "Hello World!";
+        return "Hello!";
     }
 }
