@@ -26,15 +26,17 @@ public class PlaylistResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPlayLists(@QueryParam("token") String token){
+    public Response getPlayLists(@QueryParam("token") String token) {
 
-        if(token == null || !tokenService.isValidToken(token)){
-            return Response.status(Response.Status.UNAUTHORIZED).entity("{\"error\": \"Missing token\"}").build();
+        if (token == null || !tokenService.isValidToken(token)) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\": \"Missing token\"}")
+                    .build();
         }
 
         var playlists = playlistService.getAllPlayLists();
         int totalLength = playlists.stream().flatMap(p -> p.getTracks().stream()).mapToInt(TrackDTO::getDuration).sum();
 
-        return Response.ok(new PlayListResponseDTO(playlists,totalLength)).build();
+        return Response.ok(new PlayListResponseDTO(playlists, totalLength)).build();
     }
 }
