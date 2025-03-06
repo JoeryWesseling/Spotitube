@@ -2,8 +2,8 @@ package nl.han.oose.dea.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DAO.PlaylistDAO;
 import nl.han.oose.dea.DTO.PlayListDTO;
+import nl.han.oose.dea.data.DAO.PlaylistDAO;
 
 import java.util.List;
 
