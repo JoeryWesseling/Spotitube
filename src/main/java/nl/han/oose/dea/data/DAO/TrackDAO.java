@@ -1,4 +1,4 @@
-package nl.han.oose.dea.DAO;
+package nl.han.oose.dea.data.DAO;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import nl.han.oose.dea.DTO.TrackDTO;

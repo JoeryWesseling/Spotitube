@@ -1,11 +1,7 @@
-package nl.han.oose.dea.DAO;
+package nl.han.oose.dea.data.DAO;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.mail.internet.HeaderTokenizer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ApplicationScoped
 public class TokenDAO {

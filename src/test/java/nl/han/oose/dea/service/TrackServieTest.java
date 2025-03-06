@@ -1,6 +1,6 @@
 package nl.han.oose.dea.service;
 
-import nl.han.oose.dea.DAO.TrackDAO;
+import nl.han.oose.dea.data.DAO.TrackDAO;
 import nl.han.oose.dea.DTO.TrackDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -3,7 +3,7 @@ package nl.han.oose.dea.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DAO.TokenDAO;
+import nl.han.oose.dea.data.DAO.TokenDAO;
 
 @ApplicationScoped
 public class TokenService {

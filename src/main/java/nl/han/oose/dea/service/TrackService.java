@@ -2,10 +2,9 @@ package nl.han.oose.dea.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DAO.TrackDAO;
+import nl.han.oose.dea.data.DAO.TrackDAO;
 import nl.han.oose.dea.DTO.TrackDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
