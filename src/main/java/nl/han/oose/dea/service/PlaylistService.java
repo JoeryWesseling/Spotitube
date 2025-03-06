@@ -1,15 +1,11 @@
 package nl.han.oose.dea.service;
 
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import nl.han.oose.dea.DAO.PlaylistDAO;
-import nl.han.oose.dea.DAO.TrackDAO;
 import nl.han.oose.dea.DTO.PlayListDTO;
 import nl.han.oose.dea.DTO.TrackDTO;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
@@ -19,14 +15,15 @@ public class PlaylistService {
     private PlaylistDAO playlistDAO;
 
     @Inject
-    private TrackDAO trackDAO;
+    private TrackService trackService; // Use TrackService instead of TrackDAO
 
     public List<PlayListDTO> getAllPlayLists() {
-        List<PlayListDTO> playlists = playlistDAO.getAllPlaylistst();
+        List<PlayListDTO> playlists = playlistDAO.getAllPlaylists();
 
         for (PlayListDTO playListDTO : playlists) {
-            playListDTO.setTracks(trackDAO.getTracksForPlaylist(playListDTO.getId()));
+            playListDTO.setTracks(trackService.getAllByPlaylists(playListDTO.getId()));
         }
+
         return playlists;
     }
 }

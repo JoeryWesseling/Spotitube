@@ -7,6 +7,7 @@ import nl.han.oose.dea.DTO.TrackDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @ApplicationScoped
@@ -16,9 +17,13 @@ public class TrackService {
     private TrackDAO trackDAO;
 
     public List<TrackDTO> getAllByPlaylists(int playlistId){
-        return trackDAO.getTracksForPlaylist(playlistId);
+
+        return trackDAO.getAllTracks().stream()
+                .filter(track -> track.getId() % playlistId == 0)
+                .collect(Collectors.toList());
+        }
     }
 
 
 
-}
+

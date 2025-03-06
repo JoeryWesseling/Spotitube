@@ -17,8 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PlayListResourceTest {
 
@@ -33,7 +32,7 @@ public class PlayListResourceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -88,6 +87,20 @@ public class PlayListResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(),response.getStatus());
         PlayListResponseDTO responseDTO = (PlayListResponseDTO) response.getEntity();
         assertEquals(0,responseDTO.getLength());
+    }
+
+    @Test
+    void testGetPlaylistWithNullToken(){
+        //arrange
+        //act
+
+        Response response  = playlistResource.getPlayLists(null);
+        //assert
+
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(),response.getStatus());
+
+        verifyNoInteractions(tokenServiceMock,playlistServiceMock);
+
     }
 }
 
