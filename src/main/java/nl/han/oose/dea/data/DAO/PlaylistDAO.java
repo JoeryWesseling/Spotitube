@@ -1,4 +1,4 @@
-package nl.han.oose.dea.DAO;
+package nl.han.oose.dea.data.DAO;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import nl.han.oose.dea.DTO.PlayListDTO;
@@ -21,6 +21,8 @@ public class PlaylistDAO {
         playlists.add(new PlayListDTO(1, "Lord of the Rings Music", true, lotrMusic));
         playlists.add(new PlayListDTO(2, "Gym Playlist", false, new ArrayList<>()));
         playlists.add(new PlayListDTO(3, "Coding is hard, and I suck", true, new ArrayList<>()));
+        playlists.add(new PlayListDTO(4, "I wanna die i hate this", true, new ArrayList<>()));
+
     }
 
     public List<PlayListDTO> getAllPlaylists() {

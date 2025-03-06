@@ -1,8 +1,8 @@
 package nl.han.oose.dea.service;
 
-import nl.han.oose.dea.DAO.PlaylistDAO;
 import nl.han.oose.dea.DTO.PlayListDTO;
 import nl.han.oose.dea.DTO.TrackDTO;
+import nl.han.oose.dea.data.DAO.PlaylistDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
