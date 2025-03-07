@@ -12,17 +12,13 @@ import nl.han.oose.dea.service.LoginService;
 @Path("login")
 public class Login {
 
-    private  LoginService loginService = new LoginService();
+
+    @Inject
+    private LoginService loginService;
 
     public Login(){
 
     }
-
-    @Inject
-    public Login(LoginService loginService){
-        this.loginService = loginService;
-    }
-
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

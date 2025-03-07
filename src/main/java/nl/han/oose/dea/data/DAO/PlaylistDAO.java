@@ -1,31 +1,42 @@
 package nl.han.oose.dea.data.DAO;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import nl.han.oose.dea.DTO.PlayListDTO;
-import nl.han.oose.dea.DTO.TrackDTO;
+import nl.han.oose.dea.data.database.DatabaseConnection;
+import nl.han.oose.dea.data.mappers.PlaylistMapper;
+import nl.han.oose.dea.exceptions.DatabaseException;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
 public class PlaylistDAO {
 
-    private final List<PlayListDTO> playlists = new ArrayList<>();
+    @Inject
+    private PlaylistMapper playlistMapper;
 
-    public PlaylistDAO() {
-        List<TrackDTO> lotrMusic = List.of(
-                new TrackDTO(1, "The Fields Of Pelenor", "Howard Shore", 212, "Return of the King"),
-                new TrackDTO(2, "A Storm is Coming", "Howard Shore", 212, "Return of the King")
-        );
-
-        playlists.add(new PlayListDTO(1, "Lord of the Rings Music", true, lotrMusic));
-        playlists.add(new PlayListDTO(2, "Gym Playlist", false, new ArrayList<>()));
-        playlists.add(new PlayListDTO(3, "Coding is hard, and I suck", true, new ArrayList<>()));
-        playlists.add(new PlayListDTO(4, "I wanna die i hate this", true, new ArrayList<>()));
-
-    }
+    @Inject
+    private DatabaseConnection databaseConnection;
+ 
 
     public List<PlayListDTO> getAllPlaylists() {
+
+        List<PlayListDTO> playlists = new ArrayList<>();
+        try(Connection conn = databaseConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement("select * from playlists");
+            ResultSet rs = ps.executeQuery()){
+
+            while(rs.next()){
+                playlists.add(playlistMapper.mapToDTO(rs));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Fout bij het ophalen playlistys",e);
+        }
         return playlists;
     }
 }

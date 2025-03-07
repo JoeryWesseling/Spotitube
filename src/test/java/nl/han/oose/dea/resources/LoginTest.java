@@ -7,28 +7,35 @@ import nl.han.oose.dea.DTO.LoginResponseDTO;
 import nl.han.oose.dea.service.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class LoginTest {
 
-    private Login loginResource;
-    private LoginRequestDTO loginRequestDTO;
+    @Mock
     private LoginService loginServiceMock;
 
+    @InjectMocks
+    private Login loginResource;
+
+    private LoginRequestDTO loginRequestDTO;
+
     @BeforeEach
-    void setup(){
-        this.loginServiceMock = mock(LoginService.class);
-        this.loginResource = new Login(this.loginServiceMock);  // Inject mock service
-        this.loginRequestDTO = new LoginRequestDTO();
-        this.loginRequestDTO.setUser("Sauron");
-        this.loginRequestDTO.setPassword("TheOneRingIsMine");
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+
+        loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setUser("sauron");
+        loginRequestDTO.setPassword("TheOneRingIsMine");
     }
 
+
     @Test
-    void testLoginSucces(){
+    void testLoginSucces() {
         // Arrange
         LoginResponseDTO mockResponse = new LoginResponseDTO();
         mockResponse.setUser(loginRequestDTO.getUser());
@@ -36,26 +43,33 @@ public class LoginTest {
         when(loginServiceMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
                 .thenReturn(mockResponse);
 
-        // Act
-        Response response = this.loginResource.login(this.loginRequestDTO);
+        //act
+        Response response = loginResource.login(loginRequestDTO);
         LoginResponseDTO loginResponseDTO = (LoginResponseDTO) response.getEntity();
 
-        // Assert
+        //assert
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(this.loginRequestDTO.getUser(), loginResponseDTO.getUser());
+        assertNotNull(loginResponseDTO);
+        assertEquals(loginRequestDTO.getUser(), loginResponseDTO.getUser());
+
+        verify(loginServiceMock, times(1)).checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword());
     }
 
     @Test
     void testLoginFailure() {
+        // Arrange
         when(loginServiceMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
                 .thenReturn(null);
 
         // Act
-        Response response = this.loginResource.login(this.loginRequestDTO);
+        Response response = loginResource.login(loginRequestDTO);
 
         // Assert
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         assertNull(response.getEntity());
+
+        // Verify that loginServiceMock was actually called
+        verify(loginServiceMock, times(1)).checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword());
     }
 
 }

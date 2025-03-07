@@ -15,13 +15,11 @@ public class TrackService {
     @Inject
     private TrackDAO trackDAO;
 
-    public List<TrackDTO> getAllByPlaylists(int playlistId){
+    public List<TrackDTO> getAllByPlaylists(int playlistId) {
 
-        return trackDAO.getAllTracks().stream()
-                .filter(track -> track.getId() % playlistId == 0)
-                .collect(Collectors.toList());
-        }
+        return trackDAO.getAllTracks(playlistId);
     }
+}
 
 
 
