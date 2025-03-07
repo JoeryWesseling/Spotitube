@@ -1,22 +1,32 @@
 package nl.han.oose.dea.service;
 
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.data.DAO.TokenDAO;
+import nl.han.oose.dea.DTO.LoginResponseDTO;
+import nl.han.oose.dea.data.DAO.UserDAO;
+import nl.han.oose.dea.exceptions.UnauthorizedException;
 
 @ApplicationScoped
 public class TokenService {
 
     @Inject
-    private TokenDAO tokenDAO;
+    private UserDAO userDAO;
 
-
-    public boolean isValidToken(String token){
-        return tokenDAO.isValidToken(token);
+    public boolean isValidToken(String token) {
+        try {
+            userDAO.verifyToken(token);
+            return true;
+        } catch (UnauthorizedException e) {
+            return false;
+        }
     }
 
-    public String getTOKEN() {
-        return tokenDAO.getToken();
+
+    public String getToken(String username, String password) {
+        LoginResponseDTO user = userDAO.getUserByUsername(username, password);
+        if (user != null) {
+            return user.getToken();
+        }
+        return null;
     }
 }

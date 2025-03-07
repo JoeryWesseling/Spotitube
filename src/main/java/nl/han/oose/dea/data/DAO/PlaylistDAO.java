@@ -3,7 +3,7 @@ package nl.han.oose.dea.data.DAO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import nl.han.oose.dea.DTO.PlayListDTO;
-import nl.han.oose.dea.DTO.TrackDTO;
+import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.PlaylistMapper;
 import nl.han.oose.dea.exceptions.DatabaseException;
 

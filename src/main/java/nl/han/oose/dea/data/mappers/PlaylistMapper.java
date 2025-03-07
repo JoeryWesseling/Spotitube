@@ -6,6 +6,8 @@ import nl.han.oose.dea.DTO.PlayListDTO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+
 @ApplicationScoped
 public class PlaylistMapper implements IMapper<PlayListDTO> {
     @Override

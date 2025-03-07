@@ -1,4 +1,4 @@
-package nl.han.oose.dea.data.DAO;
+package nl.han.oose.dea.data.database;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

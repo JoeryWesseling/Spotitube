@@ -10,4 +10,7 @@ public class TrackResponseDTO {
     public void setTracks(List<TrackDTO>tracks){
         this.tracks = tracks;
     }
+    public List<TrackDTO> getTracks(){
+        return tracks;
+    }
 }

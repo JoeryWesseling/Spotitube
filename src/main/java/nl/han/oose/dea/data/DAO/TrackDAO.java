@@ -3,6 +3,7 @@ package nl.han.oose.dea.data.DAO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import nl.han.oose.dea.DTO.TrackDTO;
+import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.TrackMapper;
 import nl.han.oose.dea.exceptions.DatabaseException;
 

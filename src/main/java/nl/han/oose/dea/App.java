@@ -1,8 +1,6 @@
 package nl.han.oose.dea;
 
-import jakarta.enterprise.inject.se.SeContainer;
-import jakarta.enterprise.inject.se.SeContainerInitializer;
-import nl.han.oose.dea.data.DAO.DatabaseConnection;
+import nl.han.oose.dea.data.database.DatabaseConnection;
 
 import java.sql.Connection;
 
