@@ -75,4 +75,21 @@ public class PlayListServiceTest {
         verify(playlistDAO, times(1)).updatePlaylistName(playlistId, newName);
     }
 
+    @Test
+    void testAddPlaylist() {
+        // Arrange
+        PlayListDTO newPlaylist = new PlayListDTO(-1, "Progressive Rock", false, List.of());
+        when(playlistDAO.getNextPlaylistId()).thenReturn(3);
+        doNothing().when(playlistDAO).addPlaylist(any(PlayListDTO.class), anyString());
+
+        // Act
+        playlistService.addPlaylist(newPlaylist, "Frodo");
+
+        // Assert
+        assertEquals(3, newPlaylist.getId());
+        assertTrue(newPlaylist.isOwner());
+        verify(playlistDAO, times(1)).addPlaylist(any(PlayListDTO.class), eq("Frodo"));
+    }
+
+
 }

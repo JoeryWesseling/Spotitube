@@ -57,4 +57,23 @@ public class PlaylistResource {
         }
         return Response.ok().build();
     }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPlaylist(@QueryParam("token") String token, PlayListDTO newList){
+        if(token == null || !tokenService.isValidToken(token)){
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .build();
+        }
+        String username = tokenService.getUsernameFromToken(token);
+
+        playlistService.addPlaylist(newList,username);
+
+        var updatedPlaylist = playlistService.getAllPlayLists();
+        int totalLength = updatedPlaylist.stream()
+                .flatMap(p -> p.getTracks().stream())
+                .mapToInt(TrackDTO::getDuration).sum();
+        return Response.ok(new PlayListResponseDTO(updatedPlaylist,totalLength)).build();
+    }
 }

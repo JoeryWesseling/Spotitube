@@ -36,4 +36,14 @@ public class PlaylistService {
         }
         return playlistDAO.updatePlaylistName(playlistId,name);
     }
+
+    public void addPlaylist(PlayListDTO newList, String username) {
+
+        int newId = playlistDAO.getNextPlaylistId();
+
+        newList.setId(newId);
+        newList.setOwner(true);
+
+        playlistDAO.addPlaylist(newList,username);
+    }
 }

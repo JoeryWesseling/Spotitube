@@ -13,6 +13,7 @@ public class PlaylistMapper implements IMapper<PlayListDTO> {
     @Override
     public PlayListDTO mapToDTO(ResultSet rs) throws SQLException {
 
+
         return new PlayListDTO(
                 rs.getInt("id"),
                 rs.getString("name"),

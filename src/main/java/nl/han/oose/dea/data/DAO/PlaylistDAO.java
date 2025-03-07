@@ -23,22 +23,26 @@ public class PlaylistDAO {
     @Inject
     private DatabaseConnection databaseConnection;
 
-    private final static String ISOWNERQUERY = "SELECT COUNT(*) FROM playlists WHERE id = ? AND owner = ?";
+    private static final  String ISOWNERQUERY = "SELECT COUNT(*) FROM playlists WHERE id = ? AND owner = ?";
     private static final String UPDATENAMEQUERY = "UPDATE playlists SET name = ? WHERE id = ?";
+    private static final String GETNEXTID = "SELECT MAX(id) FROM playlists";
+    private static final String ADDPLAYLISTQUERY = "INSERT INTO playlists (id,name,owner,isOwner) VALUES (?,?,?,?)";
+    private static final String GETALLPLAYLISTS = "SELECT * FROM playlists";
+
 
 
     public List<PlayListDTO> getAllPlaylists() {
 
         List<PlayListDTO> playlists = new ArrayList<>();
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement("select * from playlists");
+             PreparedStatement ps = conn.prepareStatement(GETALLPLAYLISTS);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 playlists.add(playlistMapper.mapToDTO(rs));
             }
         } catch (SQLException e) {
-            throw new DatabaseException("Fout bij het ophalen playlistys", e);
+            throw new DatabaseException("Fout bij het ophalen playlists", e);
         }
         return playlists;
     }
@@ -60,15 +64,49 @@ public class PlaylistDAO {
         return false;
     }
 
-    public boolean updatePlaylistName(int playlistId,String newName){
-        try(Connection conn = databaseConnection.getConnection();
-        PreparedStatement ps = conn.prepareStatement(UPDATENAMEQUERY)) {
+    public boolean updatePlaylistName(int playlistId, String newName) {
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(UPDATENAMEQUERY)) {
 
             ps.setString(1, newName);
             ps.setInt(2, playlistId);
             return ps.executeUpdate() > 0;
-        }catch (SQLException e){
-            throw new DatabaseException("Error updating name",e);
+        } catch (SQLException e) {
+            throw new DatabaseException("Error updating name", e);
         }
     }
+
+    public int getNextPlaylistId() {
+
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GETNEXTID);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1) + 1;
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error getting next playlistID", e);
+
+        }
+        return 1;
+    }
+
+    public void addPlaylist(PlayListDTO newList, String username){
+
+        try(Connection conn = databaseConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(ADDPLAYLISTQUERY)){
+
+            ps.setInt(1,newList.getId());
+            ps.setString(2,newList.getName());
+            ps.setString(3,username);
+            ps.setBoolean(4,true);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Error adding playlist",e);
+        }
+    }
+
+
 }
