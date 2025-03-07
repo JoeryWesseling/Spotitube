@@ -22,12 +22,7 @@ public class PlaylistDAO {
 
     @Inject
     private DatabaseConnection databaseConnection;
-
-//    private final List<PlayListDTO> playlists = new ArrayList<>();
-//
-//    public PlaylistDAO() {
-//
-//    }
+ 
 
     public List<PlayListDTO> getAllPlaylists() {
 
