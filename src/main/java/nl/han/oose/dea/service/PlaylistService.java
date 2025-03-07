@@ -46,4 +46,11 @@ public class PlaylistService {
 
         playlistDAO.addPlaylist(newList,username);
     }
+
+    public boolean deletePlaylist(int playlistId, String username) {
+        if(!playlistDAO.isOwner(playlistId,username)){
+            return false;
+        }
+        return playlistDAO.deletePlaylist(playlistId);
+    }
 }

@@ -42,38 +42,66 @@ public class PlaylistResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePlaylistName(@PathParam("id") int playlistId, @QueryParam("token") String token, PlayListDTO updatedPlaylist){
-        if(token == null || !tokenService.isValidToken(token)){
+    public Response updatePlaylistName(@PathParam("id") int playlistId, @QueryParam("token") String token, PlayListDTO updatedPlaylist) {
+        if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("{\"error\": \"Invalid or missing token\"}")
                     .build();
         }
-        boolean updated = playlistService.updatePlaylistName(playlistId,updatedPlaylist.getName(),token);
+        boolean updated = playlistService.updatePlaylistName(playlistId, updatedPlaylist.getName(), token);
 
-        if(!updated){
+        if (!updated) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("{\"error\": \"Playlist not found or you are not the owner\"}")
                     .build();
         }
         return Response.ok().build();
     }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addPlaylist(@QueryParam("token") String token, PlayListDTO newList){
-        if(token == null || !tokenService.isValidToken(token)){
+    public Response addPlaylist(@QueryParam("token") String token, PlayListDTO newList) {
+        if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("{\"error\": \"Invalid or missing token\"}")
                     .build();
         }
         String username = tokenService.getUsernameFromToken(token);
 
-        playlistService.addPlaylist(newList,username);
+        playlistService.addPlaylist(newList, username);
 
         var updatedPlaylist = playlistService.getAllPlayLists();
         int totalLength = updatedPlaylist.stream()
                 .flatMap(p -> p.getTracks().stream())
                 .mapToInt(TrackDTO::getDuration).sum();
-        return Response.ok(new PlayListResponseDTO(updatedPlaylist,totalLength)).build();
+        return Response.ok(new PlayListResponseDTO(updatedPlaylist, totalLength)).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deletePlaylist(@PathParam("id") int playlistId, @QueryParam("token") String token) {
+
+        if (token == null || !tokenService.isValidToken(token)) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .build();
+        }
+        String username = tokenService.getUsernameFromToken(token);
+
+        boolean deleted = playlistService.deletePlaylist(playlistId, username);
+        if (!deleted) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .build();
+        }
+        var updatedPlaylist = playlistService.getAllPlayLists();
+        int totalLength = updatedPlaylist.stream()
+                .flatMap(p -> p.getTracks().stream())
+                .mapToInt(TrackDTO::getDuration).sum();
+        return Response.ok(new PlayListResponseDTO(updatedPlaylist, totalLength)).build();
     }
 }
+
+

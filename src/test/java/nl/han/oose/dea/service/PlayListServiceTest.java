@@ -11,8 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class PlayListServiceTest {
@@ -90,6 +89,41 @@ public class PlayListServiceTest {
         assertTrue(newPlaylist.isOwner());
         verify(playlistDAO, times(1)).addPlaylist(any(PlayListDTO.class), eq("Frodo"));
     }
+
+
+    @Test
+    void testDeletePlaylist_Successful() {
+        // Arrange
+        int playlistId = 2;
+        String username = "Frodo";
+
+        when(playlistDAO.isOwner(playlistId, username)).thenReturn(true);
+        when(playlistDAO.deletePlaylist(playlistId)).thenReturn(true);
+
+        // Act
+        boolean result = playlistService.deletePlaylist(playlistId, username);
+
+        // Assert
+        assertTrue(result);
+        verify(playlistDAO, times(1)).deletePlaylist(playlistId);
+    }
+
+    @Test
+    void testDeletePlaylist_Failed_NotOwner() {
+        // Arrange
+        int playlistId = 3;
+        String username = "Sam";
+
+        when(playlistDAO.isOwner(playlistId, username)).thenReturn(false);
+
+        // Act
+        boolean result = playlistService.deletePlaylist(playlistId, username);
+
+        // Assert
+        assertFalse(result);
+        verify(playlistDAO, never()).deletePlaylist(playlistId);
+    }
+
 
 
 }
