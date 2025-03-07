@@ -14,7 +14,9 @@ public class PlaylistService {
     private PlaylistDAO playlistDAO;
 
     @Inject
-    private TrackService trackService; // Use TrackService instead of TrackDAO
+    private TrackService trackService;
+    @Inject
+    private TokenService tokenService;
 
     public List<PlayListDTO> getAllPlayLists() {
         List<PlayListDTO> playlists = playlistDAO.getAllPlaylists();
@@ -24,5 +26,14 @@ public class PlaylistService {
         }
 
         return playlists;
+    }
+
+    public boolean updatePlaylistName(int playlistId, String name, String token) {
+        String username = tokenService.getUsernameFromToken(token);
+
+        if(!playlistDAO.isOwner(playlistId,username)){
+            return false;
+        }
+        return playlistDAO.updatePlaylistName(playlistId,name);
     }
 }

@@ -84,4 +84,20 @@ public class UserDAO {
         }
 
 
+    public String getUserByToken(String token) {
+        String sql = "SELECT username FROM users WHERE token = ?";
+
+        try(Connection conn = databaseConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1,token);
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                return rs.getString("username");
+            }
+        }catch (SQLException e){
+            throw new DatabaseException("No username found in database that matches this token",e);
+        }
+        return null;
+    }
 }

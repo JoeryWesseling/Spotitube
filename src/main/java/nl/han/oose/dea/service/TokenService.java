@@ -29,4 +29,8 @@ public class TokenService {
         }
         return null;
     }
+
+    public String getUsernameFromToken(String token){
+        return userDAO.getUserByToken(token);
+    }
 }

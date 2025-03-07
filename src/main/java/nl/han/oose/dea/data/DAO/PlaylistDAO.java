@@ -22,21 +22,53 @@ public class PlaylistDAO {
 
     @Inject
     private DatabaseConnection databaseConnection;
- 
+
+    private final static String ISOWNERQUERY = "SELECT COUNT(*) FROM playlists WHERE id = ? AND owner = ?";
+    private static final String UPDATENAMEQUERY = "UPDATE playlists SET name = ? WHERE id = ?";
+
 
     public List<PlayListDTO> getAllPlaylists() {
 
         List<PlayListDTO> playlists = new ArrayList<>();
-        try(Connection conn = databaseConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement("select * from playlists");
-            ResultSet rs = ps.executeQuery()){
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement("select * from playlists");
+             ResultSet rs = ps.executeQuery()) {
 
-            while(rs.next()){
+            while (rs.next()) {
                 playlists.add(playlistMapper.mapToDTO(rs));
             }
         } catch (SQLException e) {
-            throw new DatabaseException("Fout bij het ophalen playlistys",e);
+            throw new DatabaseException("Fout bij het ophalen playlistys", e);
         }
         return playlists;
+    }
+
+    public boolean isOwner(int playlistId, String username) {
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(ISOWNERQUERY)) {
+
+            ps.setInt(1, playlistId);
+            ps.setString(2, username);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error checking for owner", e);
+        }
+        return false;
+    }
+
+    public boolean updatePlaylistName(int playlistId,String newName){
+        try(Connection conn = databaseConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(UPDATENAMEQUERY)) {
+
+            ps.setString(1, newName);
+            ps.setInt(2, playlistId);
+            return ps.executeUpdate() > 0;
+        }catch (SQLException e){
+            throw new DatabaseException("Error updating name",e);
+        }
     }
 }

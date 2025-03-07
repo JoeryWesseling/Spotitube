@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class PlayListServiceTest {
@@ -21,6 +22,9 @@ public class PlayListServiceTest {
 
     @Mock
     private TrackService trackService;
+
+    @Mock
+    private TokenService tokenService;
 
     @InjectMocks
     private PlaylistService playlistService;
@@ -50,4 +54,25 @@ public class PlayListServiceTest {
         verify(playlistDAO,times(1)).getAllPlaylists();
         verify(trackService,times(1)).getAllByPlaylists(1);
     }
+
+    @Test
+    void testUpdatePlaylistName_Successful() {
+        // Arrange
+        int playlistId = 1;
+        String newName = "My Updated Playlist";
+        String token = "valid-token";
+        String username = "Frodo";
+
+        when(tokenService.getUsernameFromToken(token)).thenReturn(username);
+        when(playlistDAO.isOwner(playlistId, username)).thenReturn(true);
+        when(playlistDAO.updatePlaylistName(playlistId, newName)).thenReturn(true);
+
+        // Act
+        boolean result = playlistService.updatePlaylistName(playlistId, newName, token);
+
+        // Assert
+        assertTrue(result);
+        verify(playlistDAO, times(1)).updatePlaylistName(playlistId, newName);
+    }
+
 }
