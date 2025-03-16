@@ -1,26 +1,38 @@
 package nl.han.oose.dea.service;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import nl.han.oose.dea.DTO.LoginResponseDTO;
+import nl.han.oose.dea.data.DAO.UserDAO;
 
 import java.util.UUID;
 
+
+@ApplicationScoped
 public class LoginService {
 
-    static final String VALID_USER = "Frodo";
-    static final String VALID_PASSWORD = "SamwiseGamgee";
+
+    @Inject
+    private TokenService tokenService;
+
+    @Inject
+    private UserDAO userDAO;
 
 
     public LoginResponseDTO checkCredentialsLogin(String username, String password) {
-        if(VALID_USER.equals(username) && VALID_PASSWORD.equals(password)){
-            String token = UUID.randomUUID().toString();
+        LoginResponseDTO user = userDAO.getUserByUsername(username, password);
 
-            LoginResponseDTO responseDTO = new LoginResponseDTO();
-            responseDTO.setToken(token);
-            responseDTO.setUser("Frodo Baggins");
+        if (user != null) {
+            String token = tokenService.getToken(username, password);
 
-            return responseDTO;
-
+            if (token == null) {
+                token = UUID.randomUUID().toString();
+                user.setToken(token);
+                userDAO.addToken(user);
+            }
+            return new LoginResponseDTO(user.getId(),token, user.getUser());
         }
         return null;
+
     }
 }
