@@ -38,12 +38,12 @@ public class DatabaseConnection {
                     dbProperties.getUser(),
                     dbProperties.getPassword()
             );
-            System.out.println("✅ Databaseverbinding geslaagd!");
+            System.out.println("Databaseverbinding geslaagd!");
 
             // Testquery uitvoeren
             try (Statement stmt = connection.createStatement()) {
                 stmt.execute("SELECT 1");
-                System.out.println("✅ Testquery succesvol uitgevoerd");
+                System.out.println("Testquery succesvol uitgevoerd");
             }
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -64,9 +64,9 @@ public class DatabaseConnection {
     }
     public boolean testConnection() {
         try (Connection conn = getConnection()) {
-            return conn != null && conn.isValid(2);  // Test the connection validity for 2 seconds
+            return conn != null && conn.isValid(2);
         } catch (SQLException e) {
-            return false;  // Return false if any exception occurs
+            return false;
         }
     }
 

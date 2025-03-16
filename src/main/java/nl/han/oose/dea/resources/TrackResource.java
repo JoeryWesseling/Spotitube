@@ -25,12 +25,15 @@ public class TrackResource {
     @Inject
     private TrackService trackService;
 
+    private static final String INVALID_TOKEN = "{\"error\": \"Invalid or missing token\"}";
+
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAvailableTracks(@QueryParam("forPlaylist") Integer playlistId, @QueryParam("token") String token) {
         if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
 
@@ -39,7 +42,7 @@ public class TrackResource {
             tracks = trackService.getAvailableTracks(playlistId);
 
         } else {
-            tracks = trackService.getAllTracks(playlistId);
+            tracks = trackService.getAllTracks();
         }
         return Response.ok(new TrackResponseDTO(tracks)).build();
     }

@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import nl.han.oose.dea.DTO.LoginResponseDTO;
 import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.LoginMapper;
+import nl.han.oose.dea.data.queries.UserQueries;
 import nl.han.oose.dea.exceptions.DatabaseException;
 import nl.han.oose.dea.exceptions.UnauthorizedException;
 
@@ -22,13 +23,10 @@ public class UserDAO {
     @Inject
     private LoginMapper loginMapper;
 
-    private static final String LOGIN_QUERY = "SELECT id, username, password FROM users WHERE username = ? AND password = ?";
-    private static final String ADD_TOKEN_QUERY = "UPDATE users SET token = ? WHERE id = ?";
-    private static final String FETCH_USER_BY_TOKEN_QUERY = "SELECT id, username FROM users WHERE token = ?";
 
     public LoginResponseDTO getUserByUsername(String username, String password) {
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(LOGIN_QUERY)) {
+             PreparedStatement ps = conn.prepareStatement(UserQueries.LOGIN_QUERY)) {
 
 
             ps.setString(1, username);
@@ -40,19 +38,17 @@ public class UserDAO {
                         rs.getInt("id"),
                         null,
                         rs.getString("username")
-
-
                 );
             }
         } catch (SQLException e) {
-            throw new DatabaseException("Fout bij ophalen", e);
+            throw new DatabaseException("Fout bij ophalen gegevens gebruiker", e);
         }
         return null;
     }
 
     public boolean addToken(LoginResponseDTO user) {
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(ADD_TOKEN_QUERY)) {
+             PreparedStatement ps = conn.prepareStatement(UserQueries.ADD_TOKEN_QUERY)) {
 
             ps.setString(1, user.getToken());
             ps.setInt(2, user.getId());
@@ -62,41 +58,39 @@ public class UserDAO {
         }
     }
 
-    public LoginResponseDTO verifyToken(String token) throws UnauthorizedException{
+    public LoginResponseDTO verifyToken(String token) throws UnauthorizedException {
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(FETCH_USER_BY_TOKEN_QUERY)) {
+             PreparedStatement ps = conn.prepareStatement(UserQueries.FETCH_USER_BY_TOKEN_QUERY)) {
 
-            ps.setString(1,token);
+            ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return new LoginResponseDTO(
                         rs.getInt("id"),
                         rs.getString("username"),
                         token
                 );
             }
-        } catch(SQLException e){
-            throw new DatabaseException("Fout bij verify token",e);
+        } catch (SQLException e) {
+            throw new DatabaseException("Fout bij verify token", e);
         }
         throw new UnauthorizedException();
 
 
-        }
+    }
 
 
     public String getUserByToken(String token) {
-        String sql = "SELECT username FROM users WHERE token = ?";
-
-        try(Connection conn = databaseConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setString(1,token);
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(UserQueries.FETCH_USER_BY_TOKEN_QUERY)) {
+            ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getString("username");
             }
-        }catch (SQLException e){
-            throw new DatabaseException("No username found in database that matches this token",e);
+        } catch (SQLException e) {
+            throw new DatabaseException("No username found in database that matches this token", e);
         }
         return null;
     }
