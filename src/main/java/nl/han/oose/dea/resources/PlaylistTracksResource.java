@@ -68,4 +68,29 @@ public class PlaylistTracksResource {
         List<TrackDTO> updatedTracks = trackService.getAllByPlaylists(playlistId);
         return Response.ok(new TrackResponseDTO(updatedTracks)).build();
     }
+    @DELETE
+    @Path("/{track_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeTrackFromPlaylist(@PathParam("playlist_id") int playlistId,@QueryParam("token") String token,@PathParam("track_id") int trackId){
+        if(token == null || !tokenService.isValidToken(token)){
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .build();
+        }
+        String username = tokenService.getUsernameFromToken(token);
+
+        if(!playlistDAO.isOwner(playlistId,username)){
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("{\"error\": \"You are not the owner of this playlist\"}")
+                    .build();
+        }
+
+        trackService.removeTrackFromPlaylist(playlistId,trackId);
+
+        var updatedTracks = trackService.getAllByPlaylists(playlistId);
+        return Response.ok(new TrackResponseDTO(updatedTracks)).build();
+
+
+
+    }
 }

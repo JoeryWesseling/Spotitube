@@ -35,6 +35,9 @@ public class TrackService {
     }
 
 
+    public void removeTrackFromPlaylist(int playlistId, int trackId) {
+        trackDAO.removeTrackFromPlaylist(playlistId,trackId);
+    }
 }
 
 
