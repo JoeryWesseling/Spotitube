@@ -105,6 +105,19 @@ public class TrackDAO {
 
         return availableTracks;
     }
+
+    public void removeTrackFromPlaylist(int playlistId, int trackId) {
+        try(Connection conn = databaseConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(TrackQueries.REMOVE_TRACK_FROM_PLAYLIST)){
+
+            ps.setInt(1,playlistId);
+            ps.setInt(2,trackId);
+            ps.executeUpdate();
+
+        } catch (SQLException e){
+            throw new DatabaseException("Error removing track from playlist.",e);
+        }
+    }
 }
 
 

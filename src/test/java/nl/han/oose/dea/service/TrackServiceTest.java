@@ -74,4 +74,35 @@ public class TrackServiceTest {
 
         verify(trackDAO,times(1)).getAllTracks(1);
     }
+
+    @Test
+    void testAddTrackSucces(){
+        //arrange
+        int playlistId = 1;
+        int trackId = 4;
+        boolean offlineAvailable = true;
+        when(trackDAO.addTrackToPlaylist(playlistId,trackId,offlineAvailable)).thenReturn(true);
+
+        //act
+        boolean result = trackService.addTrackToPlaylist(playlistId,trackId,offlineAvailable);
+        //assert
+        assertTrue(result,"Expected adding track to return true");
+    }
+
+    @Test
+    void testAddTrackToPlaylist_Failure() {
+        // Arrange
+        int playlistId = 1;
+        int trackId = 4;
+        boolean offlineAvailable = true;
+        when(trackDAO.addTrackToPlaylist(playlistId, trackId, offlineAvailable)).thenReturn(false);
+
+        // Act
+        boolean result = trackService.addTrackToPlaylist(playlistId, trackId, offlineAvailable);
+
+        // Assert
+        assertFalse(result, "Expected adding track to return false");
+        verify(trackDAO, times(1)).addTrackToPlaylist(playlistId, trackId, offlineAvailable);
+    }
+
 }
