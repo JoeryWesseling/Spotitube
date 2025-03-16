@@ -26,7 +26,7 @@ class TrackResourceTest {
     private TrackService trackService;
 
     @InjectMocks
-    private TrackResource trackResource;
+    private PlaylistTracksResource trackResource;
 
     @BeforeEach
     void setup() {

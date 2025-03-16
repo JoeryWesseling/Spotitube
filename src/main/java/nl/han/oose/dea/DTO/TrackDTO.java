@@ -10,6 +10,7 @@ public class TrackDTO {
     private int playCount;
     private String publicationDate;
     private String description;
+    private boolean offlineAvailable;
 
 
 
@@ -63,5 +64,13 @@ public class TrackDTO {
 
     public void setAlbum(String album) {
         this.album = album;
+    }
+
+    public boolean isOfflineAvailable() {
+        return offlineAvailable;
+    }
+
+    public void setOfflineAvailable(boolean offlineAvailable) {
+        this.offlineAvailable = offlineAvailable;
     }
 }

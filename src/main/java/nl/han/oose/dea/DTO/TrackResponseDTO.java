@@ -7,6 +7,13 @@ public class TrackResponseDTO {
 
     public List<TrackDTO> tracks;
 
+    public TrackResponseDTO(){
+    }
+
+    public TrackResponseDTO(List<TrackDTO> tracks){
+        this.tracks = tracks;
+    }
+
     public void setTracks(List<TrackDTO>tracks){
         this.tracks = tracks;
     }
