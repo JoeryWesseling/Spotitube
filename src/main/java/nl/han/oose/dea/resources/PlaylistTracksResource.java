@@ -21,8 +21,12 @@ public class PlaylistTracksResource {
 
     @Inject
     private TrackService trackService;
+
     @Inject
     private PlaylistDAO playlistDAO;
+
+    private static final String INVALID_TOKEN = "{\"error\": \"Invalid or missing token\"}";
+
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -30,7 +34,7 @@ public class PlaylistTracksResource {
 
         if(token == null || !tokenService.isValidToken(token)){
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
 
@@ -47,7 +51,7 @@ public class PlaylistTracksResource {
 
         if(token == null || !tokenService.isValidToken(token)){
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
         String username = tokenService.getUsernameFromToken(token);
@@ -74,7 +78,7 @@ public class PlaylistTracksResource {
     public Response removeTrackFromPlaylist(@PathParam("playlist_id") int playlistId,@QueryParam("token") String token,@PathParam("track_id") int trackId){
         if(token == null || !tokenService.isValidToken(token)){
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
         String username = tokenService.getUsernameFromToken(token);

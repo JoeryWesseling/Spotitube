@@ -30,8 +30,8 @@ public class TrackService {
 
     }
 
-    public List<TrackDTO> getAllTracks(int playlistId) {
-        return trackDAO.getAllTracks(playlistId);
+    public List<TrackDTO> getAllTracks() {
+        return trackDAO.getAllTracksNoId();
     }
 
 

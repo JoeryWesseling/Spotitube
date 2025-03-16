@@ -21,6 +21,10 @@ public class PlaylistResource {
     @Inject
     private PlaylistService playlistService;
 
+    private static final String INVALID_TOKEN = "{\"error\": \"Invalid or missing token\"}";
+
+
+
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +32,7 @@ public class PlaylistResource {
 
         if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
 
@@ -45,7 +49,7 @@ public class PlaylistResource {
     public Response updatePlaylistName(@PathParam("id") int playlistId, @QueryParam("token") String token, PlayListDTO updatedPlaylist) {
         if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
         boolean updated = playlistService.updatePlaylistName(playlistId, updatedPlaylist.getName(), token);
@@ -64,7 +68,7 @@ public class PlaylistResource {
     public Response addPlaylist(@QueryParam("token") String token, PlayListDTO newList) {
         if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
         String username = tokenService.getUsernameFromToken(token);
@@ -85,7 +89,7 @@ public class PlaylistResource {
 
         if (token == null || !tokenService.isValidToken(token)) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
         String username = tokenService.getUsernameFromToken(token);
@@ -93,7 +97,7 @@ public class PlaylistResource {
         boolean deleted = playlistService.deletePlaylist(playlistId, username);
         if (!deleted) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"error\": \"Invalid or missing token\"}")
+                    .entity(INVALID_TOKEN)
                     .build();
         }
         var updatedPlaylist = playlistService.getAllPlayLists();
