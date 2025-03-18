@@ -1,4 +1,4 @@
-package nl.han.oose.dea.DTO;
+package nl.han.oose.dea.dto;
 
 public class LoginRequestDTO {
     private String user;

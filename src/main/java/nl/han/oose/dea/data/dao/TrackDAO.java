@@ -1,8 +1,8 @@
-package nl.han.oose.dea.data.DAO;
+package nl.han.oose.dea.data.dao;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DTO.TrackDTO;
+import nl.han.oose.dea.dto.TrackDTO;
 import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.TrackMapper;
 import nl.han.oose.dea.data.queries.TrackQueries;

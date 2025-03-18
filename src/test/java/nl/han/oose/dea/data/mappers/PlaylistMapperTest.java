@@ -1,6 +1,6 @@
 package nl.han.oose.dea.data.mappers;
 
-import nl.han.oose.dea.DTO.PlayListDTO;
+import nl.han.oose.dea.dto.PlayListDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

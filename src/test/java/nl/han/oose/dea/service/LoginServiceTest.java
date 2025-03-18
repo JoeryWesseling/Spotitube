@@ -1,9 +1,8 @@
 package nl.han.oose.dea.service;
 
 
-import nl.han.oose.dea.DTO.LoginRequestDTO;
-import nl.han.oose.dea.DTO.LoginResponseDTO;
-import nl.han.oose.dea.data.DAO.UserDAO;
+import nl.han.oose.dea.dto.LoginResponseDTO;
+import nl.han.oose.dea.data.dao.UserDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

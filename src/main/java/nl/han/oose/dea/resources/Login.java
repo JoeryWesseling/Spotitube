@@ -4,8 +4,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import nl.han.oose.dea.DTO.LoginRequestDTO;
-import nl.han.oose.dea.DTO.LoginResponseDTO;
+import nl.han.oose.dea.dto.LoginRequestDTO;
+import nl.han.oose.dea.dto.LoginResponseDTO;
 import nl.han.oose.dea.service.LoginService;
 
 

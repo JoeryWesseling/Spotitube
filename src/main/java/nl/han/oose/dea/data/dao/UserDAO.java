@@ -1,8 +1,8 @@
-package nl.han.oose.dea.data.DAO;
+package nl.han.oose.dea.data.dao;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DTO.LoginResponseDTO;
+import nl.han.oose.dea.dto.LoginResponseDTO;
 import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.LoginMapper;
 import nl.han.oose.dea.data.queries.UserQueries;
@@ -28,7 +28,6 @@ public class UserDAO {
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(UserQueries.LOGIN_QUERY)) {
 
-
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
@@ -53,6 +52,7 @@ public class UserDAO {
             ps.setString(1, user.getToken());
             ps.setInt(2, user.getId());
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
             throw new DatabaseException("Fout bij toevoegen token", e);
         }
@@ -67,8 +67,8 @@ public class UserDAO {
             if (rs.next()) {
                 return new LoginResponseDTO(
                         rs.getInt("id"),
-                        rs.getString("username"),
-                        token
+                        token,
+                        rs.getString("username")
                 );
             }
         } catch (SQLException e) {

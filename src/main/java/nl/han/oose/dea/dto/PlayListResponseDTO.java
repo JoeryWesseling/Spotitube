@@ -1,4 +1,4 @@
-package nl.han.oose.dea.DTO;
+package nl.han.oose.dea.dto;
 
 import java.util.List;
 
@@ -6,10 +6,16 @@ public class PlayListResponseDTO {
 
     private List<PlayListDTO> playlists;
     private int length;
+    private boolean isOwner;
 
     public PlayListResponseDTO(List<PlayListDTO>playlists,int length){
         this.playlists = playlists;
         this.length = length;
+    }
+    public PlayListResponseDTO(List<PlayListDTO>playlists,int length,boolean isOwner){
+        this.playlists = playlists;
+        this.length = length;
+        this.isOwner = isOwner;
     }
 
 
@@ -28,4 +34,5 @@ public class PlayListResponseDTO {
     public void setLength(int length) {
         this.length = length;
     }
+
 }

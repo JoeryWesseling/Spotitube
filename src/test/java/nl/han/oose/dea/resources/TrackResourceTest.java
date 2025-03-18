@@ -1,8 +1,9 @@
 package nl.han.oose.dea.resources;
 
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import nl.han.oose.dea.DTO.TrackDTO;
-import nl.han.oose.dea.DTO.TrackResponseDTO;
+import nl.han.oose.dea.dto.TrackDTO;
+import nl.han.oose.dea.dto.TrackResponseDTO;
 import nl.han.oose.dea.service.TokenService;
 import nl.han.oose.dea.service.TrackService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +14,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class TrackResourceTest {
+public class TrackResourceTest {
 
     @Mock
     private TokenService tokenService;
@@ -26,53 +26,57 @@ class TrackResourceTest {
     private TrackService trackService;
 
     @InjectMocks
-    private PlaylistTracksResource trackResource;
+    private TrackResource trackResource;
+
+    private final String validToken = "valid-token";
+    private final String currentUser = "Frodo";
 
     @BeforeEach
-    void setup() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testTracksReturnsUnauthorizedWhenTokenIsInvalid() {
-        //arrange
-        String invalidToken = "invalidToken";
-        int playlistId = 1;
-        when(tokenService.isValidToken(invalidToken)).thenReturn(false);
-
-        //act
-        Response response = trackResource.tracks(playlistId, invalidToken);
-
-        //assert
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
-        assertEquals("{\"error\": \"invalid or missing token\"}", response.getEntity());
-        verify(tokenService, times(1)).isValidToken(invalidToken);
-        verify(trackService, never()).getAllByPlaylists(anyInt());
-    }
-
-    @Test
-    void testTracksReturnWhenTokenValid() {
-        //arrange
-        String validToken = "validToken";
-        int playlistId = 2;
-        List<TrackDTO> mockTracks = List.of(
-                new TrackDTO(1, "track1", "artist1", 200, "album1"),
-                new TrackDTO(2, "track2", "artist2", 200, "album2")
-        );
         when(tokenService.isValidToken(validToken)).thenReturn(true);
-        when(trackService.getAllByPlaylists(playlistId)).thenReturn(mockTracks);
-        //act
-        Response response = trackResource.tracks(playlistId, validToken);
-        TrackResponseDTO trackResponseDTO = (TrackResponseDTO) response.getEntity();
+        when(tokenService.getUsernameFromToken(validToken)).thenReturn(currentUser);
+    }
 
-        //assert
+    @Test
+    public void testGetAvailableTracks_AllTracks() {
+        List<TrackDTO> mockTracks = List.of(
+                new TrackDTO(1, "Song A", "Artist A", 200, "Album A"),
+                new TrackDTO(2, "Song B", "Artist B", 250, "Album B")
+        );
+        when(trackService.getAllTracks()).thenReturn(mockTracks);
+
+        Response response = trackResource.getAvailableTracks(null, validToken);
+
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertNotNull(trackResponseDTO);
-        assertEquals(2, trackResponseDTO.getTracks().size());
-        assertEquals("track1", trackResponseDTO.getTracks().get(0).getTitle());
-        assertEquals("track2", trackResponseDTO.getTracks().get(1).getTitle());
+        TrackResponseDTO responseDTO = (TrackResponseDTO) response.getEntity();
+        assertNotNull(responseDTO);
+        assertEquals(2, responseDTO.getTracks().size());
+    }
 
-        verify(tokenService, times(1)).isValidToken(validToken);
-        verify(trackService, times(1)).getAllByPlaylists(playlistId);
+    @Test
+    public void testGetAvailableTracks_ForPlaylist() {
+        int playlistId = 1;
+        List<TrackDTO> availableTracks = List.of(
+                new TrackDTO(3, "Song C", "Artist C", 180, "Album C")
+        );
+        when(trackService.getAvailableTracks(playlistId)).thenReturn(availableTracks);
+
+        Response response = trackResource.getAvailableTracks(playlistId, validToken);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        TrackResponseDTO responseDTO = (TrackResponseDTO) response.getEntity();
+        assertNotNull(responseDTO);
+        assertEquals(1, responseDTO.getTracks().size());
+        assertEquals("Song C", responseDTO.getTracks().get(0).getTitle());
+    }
+
+    @Test
+    public void testGetAvailableTracks_InvalidToken() {
+
+        WebApplicationException exception = assertThrows(WebApplicationException.class, () -> {
+            trackResource.getAvailableTracks(null, null);
+        });
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), exception.getResponse().getStatus());
     }
 }

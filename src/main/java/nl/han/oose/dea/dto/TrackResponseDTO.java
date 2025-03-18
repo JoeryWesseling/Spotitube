@@ -1,4 +1,4 @@
-package nl.han.oose.dea.DTO;
+package nl.han.oose.dea.dto;
 
 import java.util.List;
 

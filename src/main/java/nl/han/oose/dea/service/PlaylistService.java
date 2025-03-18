@@ -2,8 +2,8 @@ package nl.han.oose.dea.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DTO.PlayListDTO;
-import nl.han.oose.dea.data.DAO.PlaylistDAO;
+import nl.han.oose.dea.dto.PlayListDTO;
+import nl.han.oose.dea.data.dao.PlaylistDAO;
 
 import java.util.List;
 
@@ -12,7 +12,6 @@ public class PlaylistService {
 
     @Inject
     private PlaylistDAO playlistDAO;
-
     @Inject
     private TrackService trackService;
     @Inject
@@ -49,7 +48,7 @@ public class PlaylistService {
 
     public boolean deletePlaylist(int playlistId, String username) {
         if(!playlistDAO.isOwner(playlistId,username)){
-            return false;
+           return false;
         }
         return playlistDAO.deletePlaylist(playlistId);
     }

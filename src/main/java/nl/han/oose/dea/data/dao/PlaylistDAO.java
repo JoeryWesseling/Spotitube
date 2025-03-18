@@ -1,8 +1,8 @@
-package nl.han.oose.dea.data.DAO;
+package nl.han.oose.dea.data.dao;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import nl.han.oose.dea.DTO.PlayListDTO;
+import nl.han.oose.dea.dto.PlayListDTO;
 import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.PlaylistMapper;
 import nl.han.oose.dea.data.queries.PlaylistQueries;
@@ -23,9 +23,6 @@ public class PlaylistDAO {
 
     @Inject
     private DatabaseConnection databaseConnection;
-
-
-
 
     public List<PlayListDTO> getAllPlaylists() {
         List<PlayListDTO> playlists = new ArrayList<>();

@@ -1,7 +1,7 @@
 package nl.han.oose.dea.data.mappers;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import nl.han.oose.dea.DTO.LoginResponseDTO;
+import nl.han.oose.dea.dto.LoginResponseDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
