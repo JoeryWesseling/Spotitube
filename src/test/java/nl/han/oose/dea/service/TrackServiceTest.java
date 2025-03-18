@@ -167,7 +167,6 @@ public class TrackServiceTest {
     void testGetAllTracksNoIdReturnsEmptyList() {
         // Arrange
         when(trackDAO.getAllTracksNoId()).thenReturn(Collections.emptyList());
-
         // Act
         List<TrackDTO> result = trackService.getAllTracks();
 
