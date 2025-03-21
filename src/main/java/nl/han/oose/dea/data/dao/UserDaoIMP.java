@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 
 @ApplicationScoped
-public class UserDAO implements IUserDAO{
+public class UserDaoIMP implements UserDao {
     @Inject
     private DatabaseConnection databaseConnection;
 
@@ -78,7 +78,6 @@ public class UserDAO implements IUserDAO{
 
 
     }
-
 
     public String getUserByToken(String token) {
         try (Connection conn = databaseConnection.getConnection();

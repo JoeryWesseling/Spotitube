@@ -5,13 +5,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import nl.han.oose.dea.data.dao.IPlaylistDAO;
-import nl.han.oose.dea.data.domain.Track;
+import nl.han.oose.dea.data.dao.PlaylistDAO;
 import nl.han.oose.dea.dto.TrackDTO;
 import nl.han.oose.dea.dto.TrackResponseDTO;
-import nl.han.oose.dea.data.dao.PlaylistDAO;
-import nl.han.oose.dea.service.ITrackService;
-import nl.han.oose.dea.service.TokenService;
 import nl.han.oose.dea.service.TrackService;
 
 import java.util.List;
@@ -20,10 +16,10 @@ import java.util.List;
 public class PlaylistTracksResource extends BaseResource {
 
     @Inject
-    private ITrackService trackService;
+    private TrackService trackService;
 
     @Inject
-    private IPlaylistDAO playlistDAO;
+    private PlaylistDAO playlistDAO;
 
     private static final String INVALID_TOKEN = "{\"error\": \"Invalid or missing token\"}";
 

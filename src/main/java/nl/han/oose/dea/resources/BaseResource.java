@@ -3,21 +3,21 @@ package nl.han.oose.dea.resources;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import nl.han.oose.dea.service.TokenService;
+import nl.han.oose.dea.service.TokenServiceIMP;
 
 public class BaseResource {
     @Inject
-    protected TokenService tokenService;
+    protected TokenServiceIMP tokenServiceIMP;
 
 
     protected String authenticate(String token) {
-        if (token == null || !tokenService.isValidToken(token)) {
+        if (token == null || !tokenServiceIMP.isValidToken(token)) {
             throw new WebApplicationException(
                     Response.status(Response.Status.UNAUTHORIZED)
                             .entity("{\"error\": \"Invalid or missing token\"}")
                             .build()
             );
         }
-        return tokenService.getUsernameFromToken(token);
+        return tokenServiceIMP.getUsernameFromToken(token);
     }
 }

@@ -1,6 +1,6 @@
 package nl.han.oose.dea.service;
 
-import nl.han.oose.dea.data.dao.UserDAO;
+import nl.han.oose.dea.data.dao.UserDaoIMP;
 import nl.han.oose.dea.dto.LoginResponseDTO;
 import nl.han.oose.dea.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,13 +12,13 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TokenServiceTest {
+public class TokenServiceIMPTest {
 
     @Mock
-    private UserDAO userDAO;
+    private UserDaoIMP userDaoIMP;
 
     @InjectMocks
-    private TokenService tokenService;
+    private TokenServiceIMP tokenServiceIMP;
 
     @BeforeEach
     void setUp() {
@@ -30,28 +30,28 @@ public class TokenServiceTest {
         // Arrange
         String token = "validToken";
         LoginResponseDTO loginResponse = new LoginResponseDTO(1, token, "testUser");
-        when(userDAO.verifyToken(token)).thenReturn(loginResponse);
+        when(userDaoIMP.verifyToken(token)).thenReturn(loginResponse);
 
         // Act
-        boolean isValid = tokenService.isValidToken(token);
+        boolean isValid = tokenServiceIMP.isValidToken(token);
 
         // Assert
         assertTrue(isValid);
-        verify(userDAO, times(1)).verifyToken(token);
+        verify(userDaoIMP, times(1)).verifyToken(token);
     }
 
     @Test
     void testIsValidTokenReturnsFalse() throws UnauthorizedException {
         // Arrange
         String token = "invalidToken";
-        when(userDAO.verifyToken(token)).thenThrow(new UnauthorizedException());
+        when(userDaoIMP.verifyToken(token)).thenThrow(new UnauthorizedException());
 
         // Act
-        boolean isValid = tokenService.isValidToken(token);
+        boolean isValid = tokenServiceIMP.isValidToken(token);
 
         // Assert
         assertFalse(isValid);
-        verify(userDAO, times(1)).verifyToken(token);
+        verify(userDaoIMP, times(1)).verifyToken(token);
     }
 
     @Test
@@ -61,14 +61,14 @@ public class TokenServiceTest {
         String password = "testPass";
         String expectedToken = "generatedToken";
         LoginResponseDTO loginResponse = new LoginResponseDTO(1, expectedToken, username);
-        when(userDAO.getUserByUsername(username, password)).thenReturn(loginResponse);
+        when(userDaoIMP.getUserByUsername(username, password)).thenReturn(loginResponse);
 
         // Act
-        String token = tokenService.getToken(username, password);
+        String token = tokenServiceIMP.getToken(username, password);
 
         // Assert
         assertEquals(expectedToken, token);
-        verify(userDAO, times(1)).getUserByUsername(username, password);
+        verify(userDaoIMP, times(1)).getUserByUsername(username, password);
     }
 
     @Test
@@ -76,14 +76,14 @@ public class TokenServiceTest {
         // Arrange
         String username = "nonExistent";
         String password = "wrongPass";
-        when(userDAO.getUserByUsername(username, password)).thenReturn(null);
+        when(userDaoIMP.getUserByUsername(username, password)).thenReturn(null);
 
         // Act
-        String token = tokenService.getToken(username, password);
+        String token = tokenServiceIMP.getToken(username, password);
 
         // Assert
         assertNull(token);
-        verify(userDAO, times(1)).getUserByUsername(username, password);
+        verify(userDaoIMP, times(1)).getUserByUsername(username, password);
     }
 
     @Test
@@ -91,13 +91,13 @@ public class TokenServiceTest {
         // Arrange
         String token = "validToken";
         String expectedUsername = "testUser";
-        when(userDAO.getUserByToken(token)).thenReturn(expectedUsername);
+        when(userDaoIMP.getUserByToken(token)).thenReturn(expectedUsername);
 
         // Act
-        String username = tokenService.getUsernameFromToken(token);
+        String username = tokenServiceIMP.getUsernameFromToken(token);
 
         // Assert
         assertEquals(expectedUsername, username);
-        verify(userDAO, times(1)).getUserByToken(token);
+        verify(userDaoIMP, times(1)).getUserByToken(token);
     }
 }

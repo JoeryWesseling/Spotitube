@@ -4,8 +4,8 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import nl.han.oose.dea.dto.TrackDTO;
 import nl.han.oose.dea.dto.TrackResponseDTO;
-import nl.han.oose.dea.service.TokenService;
-import nl.han.oose.dea.service.TrackService;
+import nl.han.oose.dea.service.TokenServiceIMP;
+import nl.han.oose.dea.service.TrackServiceIMP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
 public class TrackResourceTest {
 
     @Mock
-    private TokenService tokenService;
+    private TokenServiceIMP tokenServiceIMP;
 
     @Mock
-    private TrackService trackService;
+    private TrackServiceIMP trackServiceIMP;
 
     @InjectMocks
     private TrackResource trackResource;
@@ -34,8 +34,8 @@ public class TrackResourceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(tokenService.isValidToken(validToken)).thenReturn(true);
-        when(tokenService.getUsernameFromToken(validToken)).thenReturn(currentUser);
+        when(tokenServiceIMP.isValidToken(validToken)).thenReturn(true);
+        when(tokenServiceIMP.getUsernameFromToken(validToken)).thenReturn(currentUser);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class TrackResourceTest {
                 new TrackDTO(1, "Song A", "Artist A", 200, "Album A"),
                 new TrackDTO(2, "Song B", "Artist B", 250, "Album B")
         );
-        when(trackService.getAllTracks()).thenReturn(mockTracks);
+        when(trackServiceIMP.getAllTracks()).thenReturn(mockTracks);
 
         Response response = trackResource.getAvailableTracks(null, validToken);
 
@@ -60,7 +60,7 @@ public class TrackResourceTest {
         List<TrackDTO> availableTracks = List.of(
                 new TrackDTO(3, "Song C", "Artist C", 180, "Album C")
         );
-        when(trackService.getAvailableTracks(playlistId)).thenReturn(availableTracks);
+        when(trackServiceIMP.getAvailableTracks(playlistId)).thenReturn(availableTracks);
 
         Response response = trackResource.getAvailableTracks(playlistId, validToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

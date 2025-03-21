@@ -20,9 +20,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TrackDAOTest {
+public class TrackDaoIMPTest {
 
-    private TrackDAO trackDAO;
+    private TrackDaoIMP trackDaoIMP;
 
     @Mock
     private TrackMapper trackMapper;
@@ -42,15 +42,15 @@ public class TrackDAOTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        trackDAO = new TrackDAO();
+        trackDaoIMP = new TrackDaoIMP();
 
-        Field dbConnField = TrackDAO.class.getDeclaredField("databaseConnection");
+        Field dbConnField = TrackDaoIMP.class.getDeclaredField("databaseConnection");
         dbConnField.setAccessible(true);
-        dbConnField.set(trackDAO, databaseConnection);
+        dbConnField.set(trackDaoIMP, databaseConnection);
 
-        Field mapperField = TrackDAO.class.getDeclaredField("trackMapper");
+        Field mapperField = TrackDaoIMP.class.getDeclaredField("trackMapper");
         mapperField.setAccessible(true);
-        mapperField.set(trackDAO, trackMapper);
+        mapperField.set(trackDaoIMP, trackMapper);
 
         when(databaseConnection.getConnection()).thenReturn(connection);
     }
@@ -69,7 +69,7 @@ public class TrackDAOTest {
                 .thenReturn(dto2);
 
         // Act
-        List<TrackDTO> tracks = trackDAO.getAllTracks(playlistId);
+        List<TrackDTO> tracks = trackDaoIMP.getAllTracks(playlistId);
 
         // Assert
         assertNotNull(tracks);
@@ -92,7 +92,7 @@ public class TrackDAOTest {
         when(trackMapper.mapToDTO(resultSet)).thenReturn(dto);
 
         // Act
-        List<TrackDTO> tracks = trackDAO.getAllTracksNoId();
+        List<TrackDTO> tracks = trackDaoIMP.getAllTracksNoId();
 
         // Assert
         assertNotNull(tracks);
@@ -110,7 +110,7 @@ public class TrackDAOTest {
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
         // Act
-        boolean result = trackDAO.addTrackToPlaylist(playlistId, trackId, offlineAvailable);
+        boolean result = trackDaoIMP.addTrackToPlaylist(playlistId, trackId, offlineAvailable);
 
         // Assert
         assertTrue(result);
@@ -130,7 +130,7 @@ public class TrackDAOTest {
         when(trackMapper.mapToDTO(resultSet)).thenReturn(dto);
 
         // Act
-        TrackDTO result = trackDAO.getTrackById(trackId);
+        TrackDTO result = trackDaoIMP.getTrackById(trackId);
 
         // Assert
         assertNotNull(result);
@@ -146,7 +146,7 @@ public class TrackDAOTest {
         when(resultSet.next()).thenReturn(false);
 
         // Act
-        TrackDTO result = trackDAO.getTrackById(trackId);
+        TrackDTO result = trackDaoIMP.getTrackById(trackId);
 
         // Assert
         assertNull(result);
@@ -166,7 +166,7 @@ public class TrackDAOTest {
                 .thenReturn(dto2);
 
         // Act
-        List<TrackDTO> tracks = trackDAO.getAvailableTracks(playlistId);
+        List<TrackDTO> tracks = trackDaoIMP.getAvailableTracks(playlistId);
 
         // Assert
         assertNotNull(tracks);
@@ -182,7 +182,7 @@ public class TrackDAOTest {
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
         // Act
-        trackDAO.removeTrackFromPlaylist(playlistId, trackId);
+        trackDaoIMP.removeTrackFromPlaylist(playlistId, trackId);
         //assert
         verify(preparedStatement).setInt(1, playlistId);
         verify(preparedStatement).setInt(2, trackId);
@@ -194,7 +194,7 @@ public class TrackDAOTest {
         int playlistId = 1;
         when(connection.prepareStatement(TrackQueries.GET_ALL_TRACKS)).thenThrow(new SQLException("DB error"));
 
-        DatabaseException ex = assertThrows(DatabaseException.class, () -> trackDAO.getAllTracks(playlistId));
+        DatabaseException ex = assertThrows(DatabaseException.class, () -> trackDaoIMP.getAllTracks(playlistId));
         assertTrue(ex.getMessage().contains("Fout bij het ophalen van de tracks"));
     }
 }

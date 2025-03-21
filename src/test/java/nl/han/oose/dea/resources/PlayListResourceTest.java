@@ -2,12 +2,12 @@ package nl.han.oose.dea.resources;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import nl.han.oose.dea.data.dao.PlaylistDAO;
+import nl.han.oose.dea.data.dao.PlaylistDaoIMP;
 import nl.han.oose.dea.dto.PlayListDTO;
 import nl.han.oose.dea.dto.PlayListResponseDTO;
 import nl.han.oose.dea.dto.TrackDTO;
-import nl.han.oose.dea.service.PlaylistService;
-import nl.han.oose.dea.service.TokenService;
+import nl.han.oose.dea.service.PlaylistServiceIMP;
+import nl.han.oose.dea.service.TokenServiceIMP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,12 +23,12 @@ import static org.mockito.Mockito.*;
 public class PlayListResourceTest {
 
     @Mock
-    private TokenService tokenServiceMock;
+    private TokenServiceIMP tokenServiceIMPMock;
 
     @Mock
-    private PlaylistService playlistServiceMock;
+    private PlaylistServiceIMP playlistServiceIMPMock;
     @Mock
-    private PlaylistDAO playlistDAO;
+    private PlaylistDaoIMP playlistDaoIMP;
 
     @InjectMocks
     private PlaylistResource playlistResource;
@@ -43,11 +43,11 @@ public class PlayListResourceTest {
         //Arrange
         String validToken = "Sauron";
 
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
 
         List<TrackDTO> tracks = List.of(new TrackDTO(1, "song", "artist", 200, "album"));
         List<PlayListDTO> mockPlaylists = List.of(new PlayListDTO(1, "playlist", true, tracks));
-        when(playlistServiceMock.getAllPlayLists()).thenReturn(mockPlaylists);
+        when(playlistServiceIMPMock.getAllPlayLists()).thenReturn(mockPlaylists);
 
         //act
         Response response = playlistResource.getPlayLists(validToken);
@@ -64,7 +64,7 @@ public class PlayListResourceTest {
     void testGetPlaylistWithInvalidToken() {
         // Arrange
         String invalidToken = "NotSauron";
-        when(tokenServiceMock.isValidToken(invalidToken)).thenReturn(false);
+        when(tokenServiceIMPMock.isValidToken(invalidToken)).thenReturn(false);
 
         // Act & Assert
         WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
@@ -78,10 +78,10 @@ public class PlayListResourceTest {
     void testGetPlaylistsWithNoTracks() {
         //arrange
         String validToken = "Sauron";
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
 
         List<PlayListDTO> emptyList = List.of(new PlayListDTO(1, "empty", true, Collections.emptyList()));
-        when(playlistServiceMock.getAllPlayLists()).thenReturn(emptyList);
+        when(playlistServiceIMPMock.getAllPlayLists()).thenReturn(emptyList);
 
         //act
         Response response = playlistResource.getPlayLists(validToken);
@@ -110,11 +110,11 @@ public class PlayListResourceTest {
         PlayListDTO updatedPlaylist = new PlayListDTO(playlistId, "New Playlist Name", true,
                 List.of(new TrackDTO(1, "song", "artist", 200, "album")));
 
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
-        when(playlistServiceMock.updatePlaylistName(playlistId, updatedPlaylist.getName(), validToken)).thenReturn(true);
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
+        when(playlistServiceIMPMock.updatePlaylistName(playlistId, updatedPlaylist.getName(), validToken)).thenReturn(true);
 
-        when(playlistServiceMock.getAllPlayLists()).thenReturn(List.of(updatedPlaylist));
-        when(playlistDAO.isOwner(playlistId, "Sauron")).thenReturn(true);
+        when(playlistServiceIMPMock.getAllPlayLists()).thenReturn(List.of(updatedPlaylist));
+        when(playlistDaoIMP.isOwner(playlistId, "Sauron")).thenReturn(true);
 
         Response response = playlistResource.updatePlaylistName(playlistId, validToken, updatedPlaylist);
 
@@ -132,8 +132,8 @@ public class PlayListResourceTest {
         int playlistId = 1;
         PlayListDTO updatedPlaylist = new PlayListDTO(playlistId, "New Playlist Name", true, List.of());
 
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
-        when(playlistServiceMock.updatePlaylistName(playlistId, updatedPlaylist.getName(), validToken)).thenReturn(false);
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
+        when(playlistServiceIMPMock.updatePlaylistName(playlistId, updatedPlaylist.getName(), validToken)).thenReturn(false);
 
         Response response = playlistResource.updatePlaylistName(playlistId, validToken, updatedPlaylist);
 
@@ -146,9 +146,9 @@ public class PlayListResourceTest {
         String validToken = "Sauron";
         PlayListDTO newList = new PlayListDTO(2, "Brand New Playlist", true, List.of());
 
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
-        when(playlistServiceMock.getAllPlayLists()).thenReturn(List.of(newList));
-        when(playlistDAO.isOwner(newList.getId(), "Sauron")).thenReturn(true);
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
+        when(playlistServiceIMPMock.getAllPlayLists()).thenReturn(List.of(newList));
+        when(playlistDaoIMP.isOwner(newList.getId(), "Sauron")).thenReturn(true);
 
         Response response = playlistResource.addPlaylist(validToken, newList);
 
@@ -165,15 +165,15 @@ public class PlayListResourceTest {
         int playlistId = 1;
 
         // Stub token validation and username retrieval
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
-        when(tokenServiceMock.getUsernameFromToken(validToken)).thenReturn("Sauron");
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
+        when(tokenServiceIMPMock.getUsernameFromToken(validToken)).thenReturn("Sauron");
 
         // Simulate a successful deletion
-        when(playlistServiceMock.deletePlaylist(playlistId, "Sauron")).thenReturn(true);
+        when(playlistServiceIMPMock.deletePlaylist(playlistId, "Sauron")).thenReturn(true);
         // After deletion, assume a remaining playlist is returned
         PlayListDTO remainingPlaylist = new PlayListDTO(2, "Remaining Playlist", true, List.of());
-        when(playlistServiceMock.getAllPlayLists()).thenReturn(List.of(remainingPlaylist));
-        when(playlistDAO.isOwner(remainingPlaylist.getId(), "Sauron")).thenReturn(true);
+        when(playlistServiceIMPMock.getAllPlayLists()).thenReturn(List.of(remainingPlaylist));
+        when(playlistDaoIMP.isOwner(remainingPlaylist.getId(), "Sauron")).thenReturn(true);
 
         // Act
         Response response = playlistResource.deletePlaylist(playlistId, validToken);
@@ -192,8 +192,8 @@ public class PlayListResourceTest {
         String validToken = "Sauron";
         int playlistId = 1;
 
-        when(tokenServiceMock.isValidToken(validToken)).thenReturn(true);
-        when(playlistServiceMock.deletePlaylist(playlistId, "Sauron")).thenReturn(false);
+        when(tokenServiceIMPMock.isValidToken(validToken)).thenReturn(true);
+        when(playlistServiceIMPMock.deletePlaylist(playlistId, "Sauron")).thenReturn(false);
 
         // Act
         Response response = playlistResource.deletePlaylist(playlistId, validToken);

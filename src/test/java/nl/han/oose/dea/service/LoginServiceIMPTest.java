@@ -2,7 +2,7 @@ package nl.han.oose.dea.service;
 
 
 import nl.han.oose.dea.dto.LoginResponseDTO;
-import nl.han.oose.dea.data.dao.UserDAO;
+import nl.han.oose.dea.data.dao.UserDaoIMP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,16 +12,16 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class LoginServiceTest {
+public class LoginServiceIMPTest {
 
     @Mock
-    private TokenService tokenService;
+    private TokenServiceIMP tokenServiceIMP;
 
     @Mock
-    private UserDAO userDAO;
+    private UserDaoIMP userDaoIMP;
 
     @InjectMocks
-    private LoginService loginService;
+    private LoginServiceIMP loginServiceIMP;
 
     private final int ID = 1;
     private final String VALIDUSERNAME = "Sauron";
@@ -38,11 +38,11 @@ public class LoginServiceTest {
     void testSuccessfulLoginWithExistingToken() {
         // Arrange
         LoginResponseDTO mockUser = new LoginResponseDTO(ID, EXISTINGTOKEN, VALIDUSERNAME);
-        when(userDAO.getUserByUsername(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(mockUser);
-        when(tokenService.getToken(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(EXISTINGTOKEN);
+        when(userDaoIMP.getUserByUsername(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(mockUser);
+        when(tokenServiceIMP.getToken(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(EXISTINGTOKEN);
 
         // Act
-        LoginResponseDTO response = loginService.checkCredentialsLogin(VALIDUSERNAME, VALIDPASSWORD);
+        LoginResponseDTO response = loginServiceIMP.checkCredentialsLogin(VALIDUSERNAME, VALIDPASSWORD);
 
         // Assert
         assertNotNull(response);
@@ -51,25 +51,25 @@ public class LoginServiceTest {
         assertEquals(VALIDUSERNAME, response.getUser());
 
         // Verify interactions
-        verify(userDAO, times(1)).getUserByUsername(VALIDUSERNAME, VALIDPASSWORD);
-        verify(tokenService, times(1)).getToken(VALIDUSERNAME, VALIDPASSWORD);
-        verify(userDAO, never()).addToken(any());
+        verify(userDaoIMP, times(1)).getUserByUsername(VALIDUSERNAME, VALIDPASSWORD);
+        verify(tokenServiceIMP, times(1)).getToken(VALIDUSERNAME, VALIDPASSWORD);
+        verify(userDaoIMP, never()).addToken(any());
     }
 
     @Test
     void testSuccessfulLoginWithNewToken() {
         // Arrange
         LoginResponseDTO mockUser = new LoginResponseDTO(ID, null, VALIDUSERNAME);
-        when(userDAO.getUserByUsername(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(mockUser);
-        when(tokenService.getToken(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(null);
+        when(userDaoIMP.getUserByUsername(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(mockUser);
+        when(tokenServiceIMP.getToken(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(null);
         doAnswer(invocation -> {
             LoginResponseDTO userArg = invocation.getArgument(0);
             assertNotNull(userArg.getToken());
             return null;
-        }).when(userDAO).addToken(mockUser);
+        }).when(userDaoIMP).addToken(mockUser);
 
         // Act
-        LoginResponseDTO response = loginService.checkCredentialsLogin(VALIDUSERNAME, VALIDPASSWORD);
+        LoginResponseDTO response = loginServiceIMP.checkCredentialsLogin(VALIDUSERNAME, VALIDPASSWORD);
 
         // Assert
         assertNotNull(response);
@@ -78,26 +78,26 @@ public class LoginServiceTest {
         assertEquals(VALIDUSERNAME, response.getUser());
 
         // Verify interactions
-        verify(userDAO, times(1)).getUserByUsername(VALIDUSERNAME, VALIDPASSWORD);
-        verify(tokenService, times(1)).getToken(VALIDUSERNAME, VALIDPASSWORD);
-        verify(userDAO, times(1)).addToken(mockUser);
+        verify(userDaoIMP, times(1)).getUserByUsername(VALIDUSERNAME, VALIDPASSWORD);
+        verify(tokenServiceIMP, times(1)).getToken(VALIDUSERNAME, VALIDPASSWORD);
+        verify(userDaoIMP, times(1)).addToken(mockUser);
     }
 
     @Test
     void testFailedLogin() {
         // Arrange
-        when(userDAO.getUserByUsername(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(null);
+        when(userDaoIMP.getUserByUsername(VALIDUSERNAME, VALIDPASSWORD)).thenReturn(null);
 
         // Act
-        LoginResponseDTO response = loginService.checkCredentialsLogin(VALIDUSERNAME, VALIDPASSWORD);
+        LoginResponseDTO response = loginServiceIMP.checkCredentialsLogin(VALIDUSERNAME, VALIDPASSWORD);
 
         // Assert
         assertNull(response);
 
         // Verify interactions
-        verify(userDAO, times(1)).getUserByUsername(VALIDUSERNAME, VALIDPASSWORD);
-        verify(tokenService, never()).getToken(any(), any());
-        verify(userDAO, never()).addToken(any());
+        verify(userDaoIMP, times(1)).getUserByUsername(VALIDUSERNAME, VALIDPASSWORD);
+        verify(tokenServiceIMP, never()).getToken(any(), any());
+        verify(userDaoIMP, never()).addToken(any());
     }
 }
 

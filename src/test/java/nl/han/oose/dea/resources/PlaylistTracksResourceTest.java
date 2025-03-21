@@ -15,29 +15,29 @@ import static org.mockito.Mockito.*;
 
 import nl.han.oose.dea.dto.TrackDTO;
 import nl.han.oose.dea.dto.TrackResponseDTO;
-import nl.han.oose.dea.data.dao.PlaylistDAO;
-import nl.han.oose.dea.service.TrackService;
+import nl.han.oose.dea.data.dao.PlaylistDaoIMP;
+import nl.han.oose.dea.service.TrackServiceIMP;
 
 public class PlaylistTracksResourceTest {
 
-    private TrackService trackService;
-    private PlaylistDAO playlistDAO;
+    private TrackServiceIMP trackServiceIMP;
+    private PlaylistDaoIMP playlistDaoIMP;
     private PlaylistTracksResource resource;
 
     @BeforeEach
     public void setup() throws Exception {
-        trackService = mock(TrackService.class);
-        playlistDAO = mock(PlaylistDAO.class);
+        trackServiceIMP = mock(TrackServiceIMP.class);
+        playlistDaoIMP = mock(PlaylistDaoIMP.class);
 
         resource = Mockito.spy(new PlaylistTracksResource());
 
         Field trackServiceField = PlaylistTracksResource.class.getDeclaredField("trackService");
         trackServiceField.setAccessible(true);
-        trackServiceField.set(resource, trackService);
+        trackServiceField.set(resource, trackServiceIMP);
 
         Field playlistDAOField = PlaylistTracksResource.class.getDeclaredField("playlistDAO");
         playlistDAOField.setAccessible(true);
-        playlistDAOField.set(resource, playlistDAO);
+        playlistDAOField.set(resource, playlistDaoIMP);
 
         doReturn("testUser").when(resource).authenticate(anyString());
     }
@@ -47,7 +47,7 @@ public class PlaylistTracksResourceTest {
         int playlistId = 1;
         String token = "validToken";
         List<TrackDTO> tracks = Arrays.asList(new TrackDTO(), new TrackDTO());
-        when(trackService.getAllByPlaylists(playlistId)).thenReturn(tracks);
+        when(trackServiceIMP.getAllByPlaylists(playlistId)).thenReturn(tracks);
 
         Response response = resource.tracks(playlistId, token);
 
@@ -55,7 +55,7 @@ public class PlaylistTracksResourceTest {
         TrackResponseDTO trackResponse = (TrackResponseDTO) response.getEntity();
         assertNotNull(trackResponse);
         assertEquals(tracks, trackResponse.getTracks());
-        verify(trackService).getAllByPlaylists(playlistId);
+        verify(trackServiceIMP).getAllByPlaylists(playlistId);
     }
 
     @Test
@@ -66,10 +66,10 @@ public class PlaylistTracksResourceTest {
         trackRequest.setId(100);
         trackRequest.setOfflineAvailable(true);
 
-        when(playlistDAO.isOwner(playlistId, "testUser")).thenReturn(true);
-        when(trackService.addTrackToPlaylist(playlistId, 100, true)).thenReturn(true);
+        when(playlistDaoIMP.isOwner(playlistId, "testUser")).thenReturn(true);
+        when(trackServiceIMP.addTrackToPlaylist(playlistId, 100, true)).thenReturn(true);
         List<TrackDTO> updatedTracks = Arrays.asList(trackRequest);
-        when(trackService.getAllByPlaylists(playlistId)).thenReturn(updatedTracks);
+        when(trackServiceIMP.getAllByPlaylists(playlistId)).thenReturn(updatedTracks);
 
         Response response = resource.addTrackToPlaylist(playlistId, token, trackRequest);
 
@@ -78,9 +78,9 @@ public class PlaylistTracksResourceTest {
         assertNotNull(trackResponse);
         assertEquals(updatedTracks, trackResponse.getTracks());
 
-        verify(playlistDAO).isOwner(playlistId, "testUser");
-        verify(trackService).addTrackToPlaylist(playlistId, 100, true);
-        verify(trackService).getAllByPlaylists(playlistId);
+        verify(playlistDaoIMP).isOwner(playlistId, "testUser");
+        verify(trackServiceIMP).addTrackToPlaylist(playlistId, 100, true);
+        verify(trackServiceIMP).getAllByPlaylists(playlistId);
     }
 
     @Test
@@ -91,14 +91,14 @@ public class PlaylistTracksResourceTest {
         trackRequest.setId(100);
         trackRequest.setOfflineAvailable(true);
 
-        when(playlistDAO.isOwner(playlistId, "testUser")).thenReturn(false);
+        when(playlistDaoIMP.isOwner(playlistId, "testUser")).thenReturn(false);
 
         Response response = resource.addTrackToPlaylist(playlistId, token, trackRequest);
 
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         assertEquals("{\"error\": \"Invalid or missing token\"}", response.getEntity());
-        verify(playlistDAO).isOwner(playlistId, "testUser");
-        verify(trackService, never()).addTrackToPlaylist(anyInt(), anyInt(), anyBoolean());
+        verify(playlistDaoIMP).isOwner(playlistId, "testUser");
+        verify(trackServiceIMP, never()).addTrackToPlaylist(anyInt(), anyInt(), anyBoolean());
     }
 
     @Test
@@ -109,15 +109,15 @@ public class PlaylistTracksResourceTest {
         trackRequest.setId(100);
         trackRequest.setOfflineAvailable(true);
 
-        when(playlistDAO.isOwner(playlistId, "testUser")).thenReturn(true);
-        when(trackService.addTrackToPlaylist(playlistId, 100, true)).thenReturn(false);
+        when(playlistDaoIMP.isOwner(playlistId, "testUser")).thenReturn(true);
+        when(trackServiceIMP.addTrackToPlaylist(playlistId, 100, true)).thenReturn(false);
 
         Response response = resource.addTrackToPlaylist(playlistId, token, trackRequest);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals("{\"error\": \"Invalid or missing token\"}", response.getEntity());
-        verify(playlistDAO).isOwner(playlistId, "testUser");
-        verify(trackService).addTrackToPlaylist(playlistId, 100, true);
+        verify(playlistDaoIMP).isOwner(playlistId, "testUser");
+        verify(trackServiceIMP).addTrackToPlaylist(playlistId, 100, true);
     }
 
     @Test
@@ -126,10 +126,10 @@ public class PlaylistTracksResourceTest {
         int trackId = 200;
         String token = "validToken";
 
-        when(playlistDAO.isOwner(playlistId, "testUser")).thenReturn(true);
-        doNothing().when(trackService).removeTrackFromPlaylist(playlistId, trackId);
+        when(playlistDaoIMP.isOwner(playlistId, "testUser")).thenReturn(true);
+        doNothing().when(trackServiceIMP).removeTrackFromPlaylist(playlistId, trackId);
         List<TrackDTO> updatedTracks = Arrays.asList(new TrackDTO());
-        when(trackService.getAllByPlaylists(playlistId)).thenReturn(updatedTracks);
+        when(trackServiceIMP.getAllByPlaylists(playlistId)).thenReturn(updatedTracks);
 
         Response response = resource.removeTrackFromPlaylist(playlistId, token, trackId);
 
@@ -138,9 +138,9 @@ public class PlaylistTracksResourceTest {
         assertNotNull(trackResponse);
         assertEquals(updatedTracks, trackResponse.getTracks());
 
-        verify(playlistDAO).isOwner(playlistId, "testUser");
-        verify(trackService).removeTrackFromPlaylist(playlistId, trackId);
-        verify(trackService).getAllByPlaylists(playlistId);
+        verify(playlistDaoIMP).isOwner(playlistId, "testUser");
+        verify(trackServiceIMP).removeTrackFromPlaylist(playlistId, trackId);
+        verify(trackServiceIMP).getAllByPlaylists(playlistId);
     }
 
     @Test
@@ -149,14 +149,14 @@ public class PlaylistTracksResourceTest {
         int trackId = 200;
         String token = "validToken";
 
-        when(playlistDAO.isOwner(playlistId, "testUser")).thenReturn(false);
+        when(playlistDaoIMP.isOwner(playlistId, "testUser")).thenReturn(false);
 
         Response response = resource.removeTrackFromPlaylist(playlistId, token, trackId);
 
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         assertEquals("{\"error\": \"Invalid or missing token\"}", response.getEntity());
 
-        verify(playlistDAO).isOwner(playlistId, "testUser");
-        verify(trackService, never()).removeTrackFromPlaylist(anyInt(), anyInt());
+        verify(playlistDaoIMP).isOwner(playlistId, "testUser");
+        verify(trackServiceIMP, never()).removeTrackFromPlaylist(anyInt(), anyInt());
     }
 }

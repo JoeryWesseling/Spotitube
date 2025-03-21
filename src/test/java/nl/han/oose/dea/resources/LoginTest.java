@@ -3,7 +3,7 @@ package nl.han.oose.dea.resources;
 import jakarta.ws.rs.core.Response;
 import nl.han.oose.dea.dto.LoginRequestDTO;
 import nl.han.oose.dea.dto.LoginResponseDTO;
-import nl.han.oose.dea.service.LoginService;
+import nl.han.oose.dea.service.LoginServiceIMP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class LoginTest {
 
     @Mock
-    private LoginService loginServiceMock;
+    private LoginServiceIMP loginServiceIMPMock;
 
     @InjectMocks
     private Login loginResource;
@@ -39,7 +39,7 @@ public class LoginTest {
         mockResponse.setUser(loginRequestDTO.getUser());
         mockResponse.setToken("validToken");
 
-        when(loginServiceMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
+        when(loginServiceIMPMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
                 .thenReturn(mockResponse);
 
         // Act
@@ -52,14 +52,14 @@ public class LoginTest {
         assertEquals(loginRequestDTO.getUser(), loginResponseDTO.getUser());
         assertEquals("validToken", loginResponseDTO.getToken());
 
-        verify(loginServiceMock, times(1)).checkCredentialsLogin(
+        verify(loginServiceIMPMock, times(1)).checkCredentialsLogin(
                 loginRequestDTO.getUser(), loginRequestDTO.getPassword());
     }
 
     @Test
     void testLoginFailure() {
         // Arrange
-        when(loginServiceMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
+        when(loginServiceIMPMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
                 .thenReturn(null);
 
         // Act
@@ -70,7 +70,7 @@ public class LoginTest {
         assertNull(response.getEntity());
 
         // Verify
-        verify(loginServiceMock, times(1)).checkCredentialsLogin(
+        verify(loginServiceIMPMock, times(1)).checkCredentialsLogin(
                 loginRequestDTO.getUser(), loginRequestDTO.getPassword());
     }
 
@@ -91,7 +91,7 @@ public class LoginTest {
         emptyLoginRequest.setUser("");
         emptyLoginRequest.setPassword("");
 
-        when(loginServiceMock.checkCredentialsLogin("", ""))
+        when(loginServiceIMPMock.checkCredentialsLogin("", ""))
                 .thenReturn(null);
 
         // Act
@@ -101,6 +101,6 @@ public class LoginTest {
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         assertNull(response.getEntity());
 
-        verify(loginServiceMock, times(1)).checkCredentialsLogin("", "");
+        verify(loginServiceIMPMock, times(1)).checkCredentialsLogin("", "");
     }
 }

@@ -20,9 +20,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class PlaylistDAOTest {
+public class PlaylistDaoIMPTest {
 
-    private PlaylistDAO playlistDAO;
+    private PlaylistDaoIMP playlistDaoIMP;
 
     @Mock
     private DatabaseConnection databaseConnection;
@@ -42,15 +42,15 @@ public class PlaylistDAOTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        playlistDAO = new PlaylistDAO();
+        playlistDaoIMP = new PlaylistDaoIMP();
 
-        Field dbConnField = PlaylistDAO.class.getDeclaredField("databaseConnection");
+        Field dbConnField = PlaylistDaoIMP.class.getDeclaredField("databaseConnection");
         dbConnField.setAccessible(true);
-        dbConnField.set(playlistDAO, databaseConnection);
+        dbConnField.set(playlistDaoIMP, databaseConnection);
 
-        Field mapperField = PlaylistDAO.class.getDeclaredField("playlistMapper");
+        Field mapperField = PlaylistDaoIMP.class.getDeclaredField("playlistMapper");
         mapperField.setAccessible(true);
-        mapperField.set(playlistDAO, playlistMapper);
+        mapperField.set(playlistDaoIMP, playlistMapper);
 
         when(databaseConnection.getConnection()).thenReturn(connection);
     }
@@ -69,7 +69,7 @@ public class PlaylistDAOTest {
                 .thenReturn(dto2);
 
         // Act
-        List<PlayListDTO> playlists = playlistDAO.getAllPlaylists();
+        List<PlayListDTO> playlists = playlistDaoIMP.getAllPlaylists();
 
         // Assert
         assertNotNull(playlists);
@@ -89,7 +89,7 @@ public class PlaylistDAOTest {
                 .thenThrow(new SQLException("DB error"));
 
         // Act & Assert
-        DatabaseException ex = assertThrows(DatabaseException.class, () -> playlistDAO.getAllPlaylists());
+        DatabaseException ex = assertThrows(DatabaseException.class, () -> playlistDaoIMP.getAllPlaylists());
         assertTrue(ex.getMessage().contains("Fout bij het ophalen playlists"));
     }
 
@@ -102,7 +102,7 @@ public class PlaylistDAOTest {
         when(resultSet.getInt(1)).thenReturn(1);
 
         // Act
-        boolean isOwner = playlistDAO.isOwner(1, "user");
+        boolean isOwner = playlistDaoIMP.isOwner(1, "user");
 
         // Assert
         assertTrue(isOwner);
@@ -117,7 +117,7 @@ public class PlaylistDAOTest {
         when(resultSet.getInt(1)).thenReturn(0);
 
         // Act
-        boolean isOwner = playlistDAO.isOwner(1, "user");
+        boolean isOwner = playlistDaoIMP.isOwner(1, "user");
 
         // Assert
         assertFalse(isOwner);
@@ -130,7 +130,7 @@ public class PlaylistDAOTest {
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
         // Act
-        boolean result = playlistDAO.updatePlaylistName(1, "New Name");
+        boolean result = playlistDaoIMP.updatePlaylistName(1, "New Name");
 
         // Assert
         assertTrue(result);
@@ -143,7 +143,7 @@ public class PlaylistDAOTest {
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
         // Act
-        boolean result = playlistDAO.updatePlaylistName(1, "New Name");
+        boolean result = playlistDaoIMP.updatePlaylistName(1, "New Name");
 
         // Assert
         assertFalse(result);
@@ -158,7 +158,7 @@ public class PlaylistDAOTest {
         when(resultSet.getInt(1)).thenReturn(5);
 
         // Act
-        int nextId = playlistDAO.getNextPlaylistId();
+        int nextId = playlistDaoIMP.getNextPlaylistId();
 
         // Assert
         assertEquals(6, nextId);
@@ -172,7 +172,7 @@ public class PlaylistDAOTest {
         when(resultSet.next()).thenReturn(false);
 
         // Act
-        int nextId = playlistDAO.getNextPlaylistId();
+        int nextId = playlistDaoIMP.getNextPlaylistId();
 
         // Asseert
         assertEquals(1, nextId);
@@ -187,7 +187,7 @@ public class PlaylistDAOTest {
         PlayListDTO newList = new PlayListDTO(10, "New Playlist", true, List.of());
 
         // Act
-        playlistDAO.addPlaylist(newList, "user");
+        playlistDaoIMP.addPlaylist(newList, "user");
 
         // Assert
         verify(preparedStatement).setInt(1, newList.getId());
@@ -205,7 +205,7 @@ public class PlaylistDAOTest {
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
         // Act
-        boolean result = playlistDAO.deletePlaylist(1);
+        boolean result = playlistDaoIMP.deletePlaylist(1);
 
         // Assert
         assertTrue(result);
@@ -218,7 +218,7 @@ public class PlaylistDAOTest {
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
         // Act
-        boolean result = playlistDAO.deletePlaylist(1);
+        boolean result = playlistDaoIMP.deletePlaylist(1);
 
         // Assert
         assertFalse(result);

@@ -4,7 +4,6 @@ import nl.han.oose.dea.dto.LoginResponseDTO;
 import nl.han.oose.dea.data.database.DatabaseConnection;
 import nl.han.oose.dea.data.mappers.LoginMapper;
 import nl.han.oose.dea.data.queries.UserQueries;
-import nl.han.oose.dea.exceptions.DatabaseException;
 import nl.han.oose.dea.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,14 +14,13 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserDAOTest {
+public class UserDaoIMPTest {
 
-    private UserDAO userDAO;
+    private UserDaoIMP userDaoIMP;
 
     @Mock
     private DatabaseConnection databaseConnection;
@@ -42,15 +40,15 @@ public class UserDAOTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        userDAO = new UserDAO();
+        userDaoIMP = new UserDaoIMP();
 
-        Field dbConnField = UserDAO.class.getDeclaredField("databaseConnection");
+        Field dbConnField = UserDaoIMP.class.getDeclaredField("databaseConnection");
         dbConnField.setAccessible(true);
-        dbConnField.set(userDAO, databaseConnection);
+        dbConnField.set(userDaoIMP, databaseConnection);
 
-        Field mapperField = UserDAO.class.getDeclaredField("loginMapper");
+        Field mapperField = UserDaoIMP.class.getDeclaredField("loginMapper");
         mapperField.setAccessible(true);
-        mapperField.set(userDAO, loginMapper);
+        mapperField.set(userDaoIMP, loginMapper);
 
         when(databaseConnection.getConnection()).thenReturn(connection);
     }
@@ -66,7 +64,7 @@ public class UserDAOTest {
         when(resultSet.getInt("id")).thenReturn(1);
         when(resultSet.getString("username")).thenReturn(username);
 
-        LoginResponseDTO response = userDAO.getUserByUsername(username, password);
+        LoginResponseDTO response = userDaoIMP.getUserByUsername(username, password);
 
         assertNotNull(response);
         assertEquals(1, response.getId());
@@ -82,7 +80,7 @@ public class UserDAOTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        LoginResponseDTO response = userDAO.getUserByUsername(username, password);
+        LoginResponseDTO response = userDaoIMP.getUserByUsername(username, password);
         assertNull(response);
     }
 
@@ -94,7 +92,7 @@ public class UserDAOTest {
         when(connection.prepareStatement(UserQueries.ADD_TOKEN_QUERY)).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        boolean result = userDAO.addToken(user);
+        boolean result = userDaoIMP.addToken(user);
 
         assertTrue(result);
         verify(preparedStatement).setString(1, "validToken");
@@ -110,7 +108,7 @@ public class UserDAOTest {
         when(connection.prepareStatement(UserQueries.ADD_TOKEN_QUERY)).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
-        boolean result = userDAO.addToken(user);
+        boolean result = userDaoIMP.addToken(user);
         assertFalse(result);
     }
 
@@ -125,7 +123,7 @@ public class UserDAOTest {
         when(resultSet.getInt("id")).thenReturn(1);
         when(resultSet.getString("username")).thenReturn("testUser");
 
-        LoginResponseDTO response = userDAO.verifyToken(token);
+        LoginResponseDTO response = userDaoIMP.verifyToken(token);
 
         assertNotNull(response);
         assertEquals(1, response.getId());
@@ -141,7 +139,7 @@ public class UserDAOTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        assertThrows(UnauthorizedException.class, () -> userDAO.verifyToken(token));
+        assertThrows(UnauthorizedException.class, () -> userDaoIMP.verifyToken(token));
     }
 
     @Test
@@ -153,7 +151,7 @@ public class UserDAOTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getString("username")).thenReturn("testUser");
 
-        String result = userDAO.getUserByToken(token);
+        String result = userDaoIMP.getUserByToken(token);
         assertEquals("testUser", result);
     }
 
@@ -165,7 +163,7 @@ public class UserDAOTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        String result = userDAO.getUserByToken(token);
+        String result = userDaoIMP.getUserByToken(token);
         assertNull(result);
     }
 }

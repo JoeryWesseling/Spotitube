@@ -2,7 +2,7 @@ package nl.han.oose.dea.service;
 
 import nl.han.oose.dea.dto.PlayListDTO;
 import nl.han.oose.dea.dto.TrackDTO;
-import nl.han.oose.dea.data.dao.PlaylistDAO;
+import nl.han.oose.dea.data.dao.PlaylistDaoIMP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,16 +17,16 @@ import static org.mockito.Mockito.*;
 public class PlayListServiceTest {
 
     @Mock
-    private PlaylistDAO playlistDAO;
+    private PlaylistDaoIMP playlistDaoIMP;
 
     @Mock
-    private TrackService trackService;
+    private TrackServiceIMP trackServiceIMP;
 
     @Mock
-    private TokenService tokenService;
+    private TokenServiceIMP tokenServiceIMP;
 
     @InjectMocks
-    private PlaylistService playlistService;
+    private PlaylistServiceIMP playlistServiceIMP;
 
     @BeforeEach
     void setup(){
@@ -40,18 +40,18 @@ public class PlayListServiceTest {
         List<PlayListDTO> mockPlaylists = List.of(mockPlaylist);
         List<TrackDTO>  mockTracks = List.of(new TrackDTO(1,"MockTracks","MockArtist",300,"MockAlbum"));
 
-        when(playlistDAO.getAllPlaylists()).thenReturn(mockPlaylists);
-        when(trackService.getAllByPlaylists(1)).thenReturn(mockTracks);
+        when(playlistDaoIMP.getAllPlaylists()).thenReturn(mockPlaylists);
+        when(trackServiceIMP.getAllByPlaylists(1)).thenReturn(mockTracks);
         //act
-        List<PlayListDTO> result = playlistService.getAllPlayLists();
+        List<PlayListDTO> result = playlistServiceIMP.getAllPlayLists();
         //assert
         assertEquals(1,result.size());
         assertEquals("Mock list!",result.get(0).getName());
         assertEquals(1,result.get(0).getTracks().size());
         assertEquals("MockTracks",result.get(0).getTracks().get(0).getTitle());
 
-        verify(playlistDAO,times(1)).getAllPlaylists();
-        verify(trackService,times(1)).getAllByPlaylists(1);
+        verify(playlistDaoIMP,times(1)).getAllPlaylists();
+        verify(trackServiceIMP,times(1)).getAllByPlaylists(1);
     }
 
     @Test
@@ -62,32 +62,32 @@ public class PlayListServiceTest {
         String token = "valid-token";
         String username = "Frodo";
 
-        when(tokenService.getUsernameFromToken(token)).thenReturn(username);
-        when(playlistDAO.isOwner(playlistId, username)).thenReturn(true);
-        when(playlistDAO.updatePlaylistName(playlistId, newName)).thenReturn(true);
+        when(tokenServiceIMP.getUsernameFromToken(token)).thenReturn(username);
+        when(playlistDaoIMP.isOwner(playlistId, username)).thenReturn(true);
+        when(playlistDaoIMP.updatePlaylistName(playlistId, newName)).thenReturn(true);
 
         // Act
-        boolean result = playlistService.updatePlaylistName(playlistId, newName, token);
+        boolean result = playlistServiceIMP.updatePlaylistName(playlistId, newName, token);
 
         // Assert
         assertTrue(result);
-        verify(playlistDAO, times(1)).updatePlaylistName(playlistId, newName);
+        verify(playlistDaoIMP, times(1)).updatePlaylistName(playlistId, newName);
     }
 
     @Test
     void testAddPlaylist() {
         // Arrange
         PlayListDTO newPlaylist = new PlayListDTO(-1, "Progressive Rock", false, List.of());
-        when(playlistDAO.getNextPlaylistId()).thenReturn(3);
-        doNothing().when(playlistDAO).addPlaylist(any(PlayListDTO.class), anyString());
+        when(playlistDaoIMP.getNextPlaylistId()).thenReturn(3);
+        doNothing().when(playlistDaoIMP).addPlaylist(any(PlayListDTO.class), anyString());
 
         // Act
-        playlistService.addPlaylist(newPlaylist, "Frodo");
+        playlistServiceIMP.addPlaylist(newPlaylist, "Frodo");
 
         // Assert
         assertEquals(3, newPlaylist.getId());
         assertTrue(newPlaylist.isOwner());
-        verify(playlistDAO, times(1)).addPlaylist(any(PlayListDTO.class), eq("Frodo"));
+        verify(playlistDaoIMP, times(1)).addPlaylist(any(PlayListDTO.class), eq("Frodo"));
     }
 
 
@@ -97,15 +97,15 @@ public class PlayListServiceTest {
         int playlistId = 2;
         String username = "Frodo";
 
-        when(playlistDAO.isOwner(playlistId, username)).thenReturn(true);
-        when(playlistDAO.deletePlaylist(playlistId)).thenReturn(true);
+        when(playlistDaoIMP.isOwner(playlistId, username)).thenReturn(true);
+        when(playlistDaoIMP.deletePlaylist(playlistId)).thenReturn(true);
 
         // Act
-        boolean result = playlistService.deletePlaylist(playlistId, username);
+        boolean result = playlistServiceIMP.deletePlaylist(playlistId, username);
 
         // Assert
         assertTrue(result);
-        verify(playlistDAO, times(1)).deletePlaylist(playlistId);
+        verify(playlistDaoIMP, times(1)).deletePlaylist(playlistId);
     }
 
     @Test
@@ -114,14 +114,14 @@ public class PlayListServiceTest {
         int playlistId = 3;
         String username = "Sam";
 
-        when(playlistDAO.isOwner(playlistId, username)).thenReturn(false);
+        when(playlistDaoIMP.isOwner(playlistId, username)).thenReturn(false);
 
         // Act
-        boolean result = playlistService.deletePlaylist(playlistId, username);
+        boolean result = playlistServiceIMP.deletePlaylist(playlistId, username);
 
         // Assert
         assertFalse(result);
-        verify(playlistDAO, never()).deletePlaylist(playlistId);
+        verify(playlistDaoIMP, never()).deletePlaylist(playlistId);
     }
 
 
