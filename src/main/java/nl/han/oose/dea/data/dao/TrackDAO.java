@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @ApplicationScoped
-public class TrackDAO {
+public class TrackDAO implements ITrackDAO{
 
     @Inject
     private TrackMapper trackMapper;

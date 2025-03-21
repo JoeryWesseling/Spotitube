@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
-public class PlaylistDAO {
+public class PlaylistDAO implements IPlaylistDAO{
 
     @Inject
     private PlaylistMapper playlistMapper;

@@ -2,16 +2,17 @@ package nl.han.oose.dea.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import nl.han.oose.dea.data.dao.IPlaylistDAO;
 import nl.han.oose.dea.dto.PlayListDTO;
 import nl.han.oose.dea.data.dao.PlaylistDAO;
 
 import java.util.List;
 
 @ApplicationScoped
-public class PlaylistService {
+public class PlaylistService implements IPlaylistService{
 
     @Inject
-    private PlaylistDAO playlistDAO;
+    private IPlaylistDAO playlistDAO;
     @Inject
     private TrackService trackService;
     @Inject

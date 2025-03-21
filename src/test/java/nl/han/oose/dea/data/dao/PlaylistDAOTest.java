@@ -60,7 +60,7 @@ public class PlaylistDAOTest {
         // Arrange
         when(connection.prepareStatement(PlaylistQueries.GET_ALL_PLAYLISTS)).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true, true, false);  // two rows, then end
+        when(resultSet.next()).thenReturn(true, true, false);
 
         PlayListDTO dto1 = new PlayListDTO(1, "Playlist 1", true, List.of());
         PlayListDTO dto2 = new PlayListDTO(2, "Playlist 2", false, List.of());

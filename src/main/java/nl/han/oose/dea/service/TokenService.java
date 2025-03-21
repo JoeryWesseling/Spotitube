@@ -2,15 +2,16 @@ package nl.han.oose.dea.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import nl.han.oose.dea.data.dao.IUserDAO;
 import nl.han.oose.dea.dto.LoginResponseDTO;
 import nl.han.oose.dea.data.dao.UserDAO;
 import nl.han.oose.dea.exceptions.UnauthorizedException;
 
 @ApplicationScoped
-public class TokenService {
+public class TokenService implements ITokenService{
 
     @Inject
-    private UserDAO userDAO;
+    private IUserDAO userDAO;
 
     public boolean isValidToken(String token) {
         try {

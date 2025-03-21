@@ -6,10 +6,12 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import nl.han.oose.dea.data.dao.IPlaylistDAO;
 import nl.han.oose.dea.data.dao.PlaylistDAO;
 import nl.han.oose.dea.dto.PlayListDTO;
 import nl.han.oose.dea.dto.PlayListResponseDTO;
 import nl.han.oose.dea.dto.TrackDTO;
+import nl.han.oose.dea.service.IPlaylistService;
 import nl.han.oose.dea.service.PlaylistService;
 import nl.han.oose.dea.service.TokenService;
 
@@ -20,10 +22,10 @@ public class PlaylistResource extends BaseResource {
 
 
     @Inject
-    private PlaylistService playlistService;
+    private IPlaylistService playlistService;
 
     @Inject
-    private PlaylistDAO playlistDAO;
+    private IPlaylistDAO playlistDAO;
 
     private static final String INVALID_TOKEN = "{\"error\": \"Invalid or missing token\"}";
 

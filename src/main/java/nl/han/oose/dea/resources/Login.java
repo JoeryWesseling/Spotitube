@@ -6,6 +6,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import nl.han.oose.dea.dto.LoginRequestDTO;
 import nl.han.oose.dea.dto.LoginResponseDTO;
+import nl.han.oose.dea.service.ILoginService;
 import nl.han.oose.dea.service.LoginService;
 
 
@@ -14,7 +15,7 @@ public class Login {
 
 
     @Inject
-    private LoginService loginService;
+    private ILoginService iLoginService;
 
     public Login(){
 
@@ -26,7 +27,7 @@ public class Login {
     public Response login(LoginRequestDTO loginrequest) {
 
 
-        LoginResponseDTO responseDTO = loginService.checkCredentialsLogin(loginrequest.getUser(),loginrequest.getPassword());
+        LoginResponseDTO responseDTO = iLoginService.checkCredentialsLogin(loginrequest.getUser(),loginrequest.getPassword());
 
         if(responseDTO != null){
             return Response.ok(responseDTO).build();

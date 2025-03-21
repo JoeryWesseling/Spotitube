@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 
 @ApplicationScoped
-public class UserDAO {
+public class UserDAO implements IUserDAO{
     @Inject
     private DatabaseConnection databaseConnection;
 
