@@ -74,7 +74,7 @@ public class UserDaoIMP implements UserDao {
         } catch (SQLException e) {
             throw new DatabaseException("Fout bij verify token", e);
         }
-        throw new UnauthorizedException();
+        throw new UnauthorizedException("Invalid token");
 
 
     }

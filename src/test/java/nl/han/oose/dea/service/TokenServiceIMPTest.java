@@ -44,7 +44,7 @@ public class TokenServiceIMPTest {
     void testIsValidTokenReturnsFalse() throws UnauthorizedException {
         // Arrange
         String token = "invalidToken";
-        when(userDaoIMP.verifyToken(token)).thenThrow(new UnauthorizedException());
+        when(userDaoIMP.verifyToken(token)).thenThrow(new UnauthorizedException("invalid token"));
 
         // Act
         boolean isValid = tokenServiceIMP.isValidToken(token);

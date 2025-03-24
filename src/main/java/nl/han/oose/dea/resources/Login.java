@@ -6,8 +6,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import nl.han.oose.dea.dto.LoginRequestDTO;
 import nl.han.oose.dea.dto.LoginResponseDTO;
+import nl.han.oose.dea.exceptions.UnauthorizedException;
 import nl.han.oose.dea.service.LoginService;
-import nl.han.oose.dea.service.LoginServiceIMP;
 
 
 @Path("login")
@@ -15,7 +15,7 @@ public class Login {
 
 
     @Inject
-    private LoginService LoginService;
+    private LoginService loginService;
 
     public Login(){
 
@@ -24,16 +24,18 @@ public class Login {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(LoginRequestDTO loginrequest) {
+    public Response login(LoginRequestDTO loginRequest) {
 
 
-        LoginResponseDTO responseDTO = LoginService.checkCredentialsLogin(loginrequest.getUser(),loginrequest.getPassword());
-
-        if(responseDTO != null){
+        LoginResponseDTO responseDTO = loginService.checkCredentialsLogin(loginRequest.getUser(), loginRequest.getPassword());
+        if (responseDTO != null) {
             return Response.ok(responseDTO).build();
         } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .build();
+            try {
+                throw new UnauthorizedException("Invalid credentials");
+            } catch (UnauthorizedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
