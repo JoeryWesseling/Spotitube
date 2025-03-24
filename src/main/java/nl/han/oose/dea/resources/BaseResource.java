@@ -3,11 +3,11 @@ package nl.han.oose.dea.resources;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import nl.han.oose.dea.service.TokenServiceIMP;
+import nl.han.oose.dea.service.TokenService;
 
 public class BaseResource {
     @Inject
-    protected TokenServiceIMP tokenServiceIMP;
+    protected TokenService tokenServiceIMP;
 
 
     protected String authenticate(String token) {
