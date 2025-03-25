@@ -8,9 +8,9 @@ import jakarta.ws.rs.ext.Provider;
 public class UnauthorizedExceptionMapper implements ExceptionMapper<UnauthorizedException> {
 
     @Override
-    public Response toResponse(UnauthorizedException ex) {
+    public Response toResponse(UnauthorizedException exception) {
         return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("{\"error\": \"" + ex.getMessage() + "\"}")
+                .entity(exception.getMessage())
                 .build();
     }
 }

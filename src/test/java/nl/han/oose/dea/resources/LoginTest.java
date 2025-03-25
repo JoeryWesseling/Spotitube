@@ -3,6 +3,7 @@ package nl.han.oose.dea.resources;
 import jakarta.ws.rs.core.Response;
 import nl.han.oose.dea.dto.LoginRequestDTO;
 import nl.han.oose.dea.dto.LoginResponseDTO;
+import nl.han.oose.dea.exceptions.UnauthorizedException;
 import nl.han.oose.dea.service.LoginServiceIMP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class LoginTest {
     }
 
     @Test
-    void testLoginSucces() {
+    void testLoginSucces() throws UnauthorizedException {
         // Arrange
         LoginResponseDTO mockResponse = new LoginResponseDTO();
         mockResponse.setUser(loginRequestDTO.getUser());
@@ -62,14 +63,9 @@ public class LoginTest {
         when(loginServiceIMPMock.checkCredentialsLogin(loginRequestDTO.getUser(), loginRequestDTO.getPassword()))
                 .thenReturn(null);
 
-        // Act
-        Response response = loginResource.login(loginRequestDTO);
+        // Act & Assert
+        assertThrows(UnauthorizedException.class, () -> loginResource.login(loginRequestDTO));
 
-        // Assert
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
-        assertNull(response.getEntity());
-
-        // Verify
         verify(loginServiceIMPMock, times(1)).checkCredentialsLogin(
                 loginRequestDTO.getUser(), loginRequestDTO.getPassword());
     }
@@ -86,20 +82,15 @@ public class LoginTest {
 
     @Test
     void testLoginWithEmptyCredentials() {
-        // Arrange:
+        // Arrange
         LoginRequestDTO emptyLoginRequest = new LoginRequestDTO();
         emptyLoginRequest.setUser("");
         emptyLoginRequest.setPassword("");
 
-        when(loginServiceIMPMock.checkCredentialsLogin("", ""))
-                .thenReturn(null);
+        when(loginServiceIMPMock.checkCredentialsLogin("", "")).thenReturn(null);
 
-        // Act
-        Response response = loginResource.login(emptyLoginRequest);
-
-        // Assert:
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
-        assertNull(response.getEntity());
+        // Act & Assert
+        assertThrows(UnauthorizedException.class, () -> loginResource.login(emptyLoginRequest));
 
         verify(loginServiceIMPMock, times(1)).checkCredentialsLogin("", "");
     }

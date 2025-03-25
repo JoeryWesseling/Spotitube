@@ -24,7 +24,7 @@ public class Login {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(LoginRequestDTO loginRequest) {
+    public Response login(LoginRequestDTO loginRequest) throws UnauthorizedException {
 
 
         LoginResponseDTO responseDTO = loginService.checkCredentialsLogin(loginRequest.getUser(), loginRequest.getPassword());
@@ -34,7 +34,7 @@ public class Login {
             try {
                 throw new UnauthorizedException("Invalid credentials");
             } catch (UnauthorizedException e) {
-                throw new RuntimeException(e);
+                throw e;
             }
         }
     }
